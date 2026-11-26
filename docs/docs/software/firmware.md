@@ -111,8 +111,9 @@ binario e occupazione di flash.
 
 1. Risveglio dal timer RTC (uscita dal deep sleep).
 2. **Impostare lo switch RF dell'antenna**, prima di toccare il BLE.
-3. D2 a livello alto → attesa di avvio → inizializzazione del VL53L1X
-   (distance mode short/medium, ROI ristretta se serve).
+3. Accensione del sensore (`sensor_power_set(true)`) → attesa di avvio →
+   inizializzazione del VL53L1X (distance mode short/medium, ROI ristretta
+   se serve).
 4. 5–7 misure → **mediana**, scartando le letture che il sensore segnala come
    non valide.
 5. Lettura della batteria: ADC calibrato (`esp_adc_cali`) → mV × fattore del
@@ -120,6 +121,26 @@ binario e occupazione di flash.
 6. Costruzione del pacchetto BTHome e advertising per ~1 s (intervallo ~100 ms).
 7. Spegnimento del sensore, stato sicuro di SDA/SCL/XSHUT, incremento del
    packet id in RTC memory, deep sleep.
+
+## Come e' alimentato il sensore: scelta a compile time
+
+Sul PCB le due configurazioni dell'alimentazione del sensore convivono e si
+scelgono col ponticello JP1 (vedi [Circuito stampato](/hardware/pcb/)).
+**Fra le due la logica di D2 si inverte**, quindi la configurazione deve
+essere esplicita anche nel firmware: montare il MOSFET e dimenticarsene
+produce un sensore che non si accende mai, e sul banco sembra un sensore
+guasto.
+
+La decide una macro sola, in `firmware/main/pins.h`:
+
+| `SENSORE_CON_MOSFET` | Rame | Livello per accendere |
+|---|---|---|
+| `0` (default) | JP1 su 1-2, Q1 e R3 non montati | `PIN_SENS_CTRL` **alto** |
+| `1` | JP1 su 2-3, Q1 e R3 montati | `PIN_SENS_CTRL` **basso** |
+
+Il default e' allineato al default del rame, cioe' la configurazione gia'
+verificata sul prototipo. `sensor_power_set()` non conosce il livello: usa
+`SENS_CTRL_ACCESO`, che la macro ricava.
 
 ## Vincoli da non violare
 

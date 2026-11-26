@@ -36,17 +36,18 @@ static RTC_DATA_ATTR uint8_t packet_id;
 
 // Accende o spegne il breakout del sensore.
 //
-// ATTENZIONE: alto = acceso. Con l'upgrade a P-MOSFET high-side annotato
-// sullo schema la logica si inverte; il punto da cambiare e' questo piu'
-// il commento su PIN_VSENS.
+// Quale livello accenda dipende dalla configurazione del rame, e non e'
+// una cosa da ricordarsi: la decide SENS_CTRL_ACCESO in pins.h.
 static void sensor_power_set(bool on)
 {
     gpio_config_t cfg = {
-        .pin_bit_mask = 1ULL << PIN_VSENS,
+        .pin_bit_mask = 1ULL << PIN_SENS_CTRL,
         .mode = GPIO_MODE_OUTPUT,
     };
     ESP_ERROR_CHECK(gpio_config(&cfg));
-    ESP_ERROR_CHECK(gpio_set_level(PIN_VSENS, on ? 1 : 0));
+    ESP_ERROR_CHECK(gpio_set_level(PIN_SENS_CTRL,
+                                   on ? SENS_CTRL_ACCESO
+                                      : !SENS_CTRL_ACCESO));
 }
 
 // Imposta lo switch RF dell'antenna.

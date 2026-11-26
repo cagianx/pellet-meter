@@ -12,13 +12,26 @@
 
 // --- Reti dello schema ------------------------------------------------------
 
-// VSENS: alimentazione del breakout VL53L1X, presa direttamente dal GPIO.
-// Alto = sensore acceso.
+// SENS_CTRL: il pin che comanda l'alimentazione del breakout VL53L1X.
+#define PIN_SENS_CTRL GPIO_NUM_2 // D2
+
+// Come e' alimentato il sensore. Sul PCB le due configurazioni convivono e
+// si scelgono col ponticello JP1 (1-2 diretta, 2-3 a MOSFET); su millefori
+// c'e' solo la diretta.
 //
-// ATTENZIONE: se si monta l'upgrade a P-MOSFET high-side annotato sullo
-// schema, questa logica si INVERTE (basso = acceso). Cambiare qui e nel
-// commento di sensor_power_set().
-#define PIN_VSENS GPIO_NUM_2 // D2
+//   0  diretta: D2 alimenta il breakout. ALTO = acceso.
+//   1  MOSFET:  D2 pilota il gate di Q1, P-MOSFET high-side. BASSO = acceso.
+//
+// FRA LE DUE LA LOGICA SI INVERTE. E' una scelta esplicita a compile time
+// proprio per questo: montare Q1 e dimenticarsene produce un sensore che
+// non si accende mai, e sul banco sembra un sensore guasto. Il default e'
+// allineato al default del rame, cioe' la configurazione gia' verificata.
+#ifndef SENSORE_CON_MOSFET
+#define SENSORE_CON_MOSFET 0
+#endif
+
+// Livello da mettere su SENS_CTRL per accendere il sensore.
+#define SENS_CTRL_ACCESO (SENSORE_CON_MOSFET ? 0 : 1)
 
 #define PIN_SDA   GPIO_NUM_22 // D4
 #define PIN_SCL   GPIO_NUM_23 // D5
