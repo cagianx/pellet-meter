@@ -119,9 +119,9 @@ che il sensore legga" no.
 
 ## Regole
 
-Due regole non negoziabili, perche' il lavoro su questo progetto e' distribuito
-su conversazioni diverse che non condividono memoria: il repo e' l'unico punto
-di passaggio.
+Quattro regole non negoziabili, perche' il lavoro su questo progetto e'
+distribuito su conversazioni diverse che non condividono memoria: il repo e'
+l'unico punto di passaggio.
 
 1. **Il know-how va conservato in `docs/`.** Tutto quello che si impara
    lavorando — perche' una scelta e' stata fatta, cosa e' stato provato e non
@@ -137,7 +137,19 @@ di passaggio.
    **Prima di cancellare**, verificare che il know-how dentro quella cosa sia
    gia' conservato in `docs/`: si elimina l'artefatto, non la conoscenza.
 
-3. **Le modifiche passano per OpenSpec.** Prima si propone un change in
+3. **I file `.md` si correggono da soli, senza chiedere.** Quando si impara
+   come si usa davvero uno strumento, o quando l'utente dice di usarne uno
+   diverso, i file di documentazione — questo compreso, `README.md`, le
+   pagine di `docs/`, i design dei change — vanno aggiornati **nello stesso
+   lavoro**, non segnalati come "da sistemare". Vale anche per le
+   incoerenze trovate di passaggio: un comando che non e' piu' quello
+   giusto, un percorso cambiato, un conteggio sbagliato.
+   La ragione e' la stessa della regola 1: una documentazione che descrive
+   un passato non dichiarato e' peggio di nessuna documentazione, perche'
+   chi la legge non sa quale meta' e' ancora vera. **Non si chiede il
+   permesso di correggere una cosa falsa.**
+
+4. **Le modifiche passano per OpenSpec.** Prima si propone un change in
    `openspec/changes/<nome>/` con proposal, spec, design e task; poi si
    implementa; poi si archivia aggiornando le spec in `openspec/specs/`.
    Non si inizia a modificare il progetto senza un change che dica cosa si sta

@@ -20,17 +20,18 @@ torna in deep sleep. Home Assistant lo riconosce da solo.
 | Alimentazione | LiPo 3,7 V 1000 mAh con circuito di protezione |
 | Radio | BLE advertising, BTHome v2 |
 
-Consumo stimato con risveglio ogni 15 minuti: **~1 mAh al giorno**, cioe'
-oltre un anno di autonomia teorica — a quel punto conta piu' l'autoscarica
-della batteria che il dispositivo.
+Risveglio ogni **10 minuti**. Consumo stimato nell'ordine di **1 mAh al
+giorno**, cioe' oltre un anno di autonomia teorica — a quel punto conta piu'
+l'autoscarica della batteria che il dispositivo. La stima va confermata con
+la misura sul banco.
 
 ## Stato
 
 | | |
 |---|---|
-| Schema elettrico | fatto — ERC pulito, netlist verificata |
+| Schema elettrico | fatto — ERC pulito, netlist verificata; disposizione da curare |
+| Firmware | scheletro ESP-IDF che compila, switch RF; misura e BTHome da scrivere |
 | Contenitore 3D | da fare |
-| Firmware | da fare |
 | Configurazione Home Assistant | da fare |
 
 Il repo fornisce **il progetto**, non la realizzazione: schema, firmware,
@@ -54,6 +55,8 @@ verifica e le trappole del formato KiCad incontrate durante lo sviluppo.
 
 ```
 kicad/        progetto KiCad 10 (schema, librerie di progetto, strumenti)
+firmware/     progetto ESP-IDF (C17, target esp32c6)
 enclosure/    contenitore parametrico OpenSCAD
+tools/        render.sh — immagini per il sito e il README
 docs/         sorgenti del sito di documentazione
 ```

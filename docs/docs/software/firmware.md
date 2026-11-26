@@ -6,9 +6,11 @@ description: "Ciclo di funzionamento e vincoli di consumo."
 # Firmware
 
 :::warning
-**Non ancora scritto.** Qui c'e' il progetto del ciclo e i vincoli da
-rispettare. Il lavoro e' tracciato nel change OpenSpec `firmware-bthome`.
-Le tre decisioni che bloccavano l'inizio sono chiuse, e sono qui sotto.
+**Scheletro in piedi, acquisizione e radio da scrivere.** In `firmware/`
+c'e' un progetto ESP-IDF che compila per esp32c6 e che gestisce lo switch
+RF dell'antenna; misura, pacchetto BTHome e deep sleep completo sono i task
+ancora aperti del change `firmware-bthome`. Nel codice i punti mancanti
+sono marcati con il numero del task.
 :::
 
 ## Le tre decisioni chiuse
