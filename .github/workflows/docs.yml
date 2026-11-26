@@ -5,21 +5,15 @@ name: docs
 # perche' il progetto docmd sta in docs/ e non nella radice del repo.
 
 on:
+  # Su main nessun filtro di percorso: il sito si ripubblica a ogni commit.
+  # Filtrare sembrava un risparmio, ma significa che un commit che tocca
+  # solo firmware/ o openspec/ lascia online un sito che descrive lo stato
+  # precedente — e nessuno se ne accorge, perche' la CI e' verde.
   push:
     branches: [main]
-    paths:
-      - 'docs/**'
-      - 'tools/**'
-      - 'kicad/**'
-      - 'enclosure/**'
-      - '.github/workflows/docs.yml'
+  # Nemmeno sulle pull request: un filtro qui farebbe passare verde una PR
+  # che rompe il sito, per poi scoprirlo su main dopo il merge.
   pull_request:
-    paths:
-      - 'docs/**'
-      - 'tools/**'
-      - 'kicad/**'
-      - 'enclosure/**'
-      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 permissions:

@@ -97,6 +97,22 @@ Lo stesso vale per gli STL, per cui il controllo "il file esiste e non e'
 vuoto" c'era gia': il codice di uscita di OpenSCAD non e' una fonte
 affidabile di verita'.
 
+## Il sito si ripubblica a ogni commit su main
+
+Il workflow `docs` non ha filtri di percorso. E' deliberato: filtrare
+sembra un risparmio, ma vuol dire che un commit che tocca solo `firmware/`
+o `openspec/` lascia online un sito che descrive lo stato precedente —
+e nessuno se ne accorge, perche' la CI e' verde.
+
+Il prezzo e' che il job di render gira anche quando non e' cambiato niente
+di grafico: qualche minuto per tirare giu' il container di KiCad. Vale la
+pena, perche' l'alternativa e' una documentazione pubblicata che non
+corrisponde al repo, che e' esattamente il guasto che queste regole
+esistono per evitare.
+
+Lo stesso vale per le pull request: senza filtro, una PR che rompe il sito
+si vede prima del merge e non dopo.
+
 ## Le immagini referenziate devono esistere
 
 Una pagina che cita un'immagine mancante si costruisce **senza errori**:
