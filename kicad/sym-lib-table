@@ -3,4 +3,5 @@
 	(lib (name "pellet-meter")(type "KiCad")(uri "${KIPRJMOD}/lib/pellet-meter.kicad_sym")(options "")(descr "Simboli di progetto: XIAO ESP32C6, breakout VL53L1X"))
 	(lib (name "Device")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/Device.kicad_sym")(options "")(descr ""))
 	(lib (name "power")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/power.kicad_sym")(options "")(descr ""))
+	(lib (name "Jumper")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/Jumper.kicad_sym")(options "")(descr ""))
 )

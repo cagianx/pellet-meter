@@ -1,0 +1,65 @@
+#VRML V2.0 utf8
+#
+# Solido SOSTITUTIVO dello XIAO ESP32C6 innestato sul suo header femmina.
+#
+# NON e' il modello del modulo: sono tre parallelepipedi con le quote
+# d'ingombro. Serve a due cose, e per entrambe l'ingombro basta: far
+# vedere nei render che sul modulo c'e' qualcosa di alto, e dare alla
+# verifica di accoppiamento l'altezza vera dell'assieme.
+#
+# Perche' un sostituto e non il modello vero: il footprint
+# XIAO-ESP32-C6-DIP portava i modelli STEP di cinque altri XIAO sotto
+# ${AMZPATH}, una variabile che il progetto non definisce e che punta a
+# una libreria di terze parti. Nessuno di quei file esiste qui ne'
+# nell'immagine kicad/kicad:10.0.8-full usata in CI, quindi "usare un
+# altro XIAO della famiglia come sostituto" non era praticabile.
+#
+# Perche' VRML e non STL: kicad-cli pcb render carica i .wrl e ignora in
+# silenzio i .stl. Provato: con il modello in .stl il render esce con il
+# modulo mancante e senza nessun avviso.
+#
+# L'header femmina fa parte di questo solido anche se non e' un
+# componente dello schema: e' lui a decidere l'altezza dell'assieme, e
+# senza di lui la verifica di accoppiamento misurerebbe 8,5 mm in meno.
+#
+# Quote: modulo 21 x 17,5 x 3,5 mm (datasheet Seeed), header femmina
+# 2,54 mm a 7 vie alto 8,5 mm, file distanti 15,24 mm.
+
+Transform {
+  # KiCad legge il VRML in unita' da 0,1 pollice: cosi' i numeri qui
+  # sotto restano in millimetri.
+  scale 0.39370079 0.39370079 0.39370079
+  children [
+
+    # DEF definisce E disegna: la forma va definita gia' dentro la sua
+    # Transform, altrimenti ne compare una terza copia nell'origine,
+    # mezza sotto la scheda.
+    Transform {
+      translation 0 -7.62 4.25
+      children [
+        DEF contatti Shape {
+          appearance Appearance {
+            material Material { diffuseColor 0.08 0.08 0.09 }
+          }
+          geometry Box { size 17.78 2.54 8.5 }
+        }
+      ]
+    }
+    Transform {
+      translation 0 7.62 4.25
+      children [ USE contatti ]
+    }
+
+    Transform {
+      translation 0 0 10.25
+      children [
+        Shape {
+          appearance Appearance {
+            material Material { diffuseColor 0.12 0.13 0.16 }
+          }
+          geometry Box { size 21.0 17.5 3.5 }
+        }
+      ]
+    }
+  ]
+}

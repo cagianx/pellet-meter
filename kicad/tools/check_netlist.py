@@ -15,20 +15,29 @@ import re
 import sys
 
 # rete -> insieme di "REF.pin" attesi
+#
+# L'alimentazione del sensore ha due configurazioni sullo stesso rame, scelte
+# con il ponticello JP1 (vedi docs/hardware/pcb/). Da qui si vedono entrambe:
+# D2 comanda SENS_CTRL, che arriva al gate di Q1 e al pad 1 di JP1; VSENS,
+# che alimenta il sensore, arriva al pad 2; il drain di Q1 al pad 3. Quale
+# delle due e' attiva lo decide la goccia di stagno, non la netlist.
 ATTESE = {
     'GND': {'BT1.2', 'C1.2', 'C2.2', 'C3.2', 'R2.2',
             'U1.13', 'U1.18', 'U1.24', 'U2.2'},
     'BAT_SENSE': {'C1.1', 'R1.2', 'R2.1', 'U1.1'},
-    'VSENS': {'C2.1', 'C3.1', 'U1.3', 'U2.1'},
+    'VSENS': {'C2.1', 'C3.1', 'JP1.2', 'U2.1'},
     'VBAT': {'BT1.1', 'R1.1', 'U1.23'},
     'SDA': {'U1.5', 'U2.3'},
     'SCL': {'U1.6', 'U2.4'},
     'XSHUT': {'U1.4', 'U2.5'},
+    'SENS_CTRL': {'JP1.1', 'Q1.1', 'R3.2', 'U1.3'},
+    'SW_OUT': {'JP1.3', 'Q1.3'},
+    '3V3_OUT': {'Q1.2', 'R3.1', 'U1.12'},
 }
 
 # pin lasciati deliberatamente scollegati: devono restare reti a nodo singolo
 SCOLLEGATI_ATTESI = {
-    'U1.2', 'U1.7', 'U1.8', 'U1.9', 'U1.10', 'U1.11', 'U1.12', 'U1.14',
+    'U1.2', 'U1.7', 'U1.8', 'U1.9', 'U1.10', 'U1.11', 'U1.14',
     'U1.15', 'U1.16', 'U1.17', 'U1.19', 'U1.20', 'U1.21', 'U1.22', 'U2.6',
 }
 
