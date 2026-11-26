@@ -31,7 +31,7 @@ ancora da fare.
 |---|---|
 | Schema elettrico | fatto — ERC pulito, netlist verificata; disposizione da curare |
 | Firmware | scheletro ESP-IDF che compila, switch RF; misura e BTHome da scrivere |
-| Contenitore 3D | modello OpenSCAD parametrico, quote verificate; da stampare |
+| Contenitore 3D | modello OpenSCAD parametrico, quote verificate; si incolla sotto il coperchio della tramoggia, quindi capovolto |
 | Configurazione Home Assistant | da fare |
 
 Il repo fornisce **il progetto**, non la realizzazione: schema, firmware,

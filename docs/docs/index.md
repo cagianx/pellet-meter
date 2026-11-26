@@ -34,7 +34,7 @@ fidarsene.
 | | |
 |---|---|
 | Schema elettrico | fatto, ERC pulito e reti verificate; disposizione da curare |
-| Contenitore 3D | modello OpenSCAD parametrico, quote verificate contro il solido |
+| Contenitore 3D | modello OpenSCAD parametrico, quote verificate contro il solido; si incolla capovolto sotto il coperchio della tramoggia |
 | Firmware | scheletro ESP-IDF che compila, switch RF; misura e BTHome da scrivere |
 | Configurazione Home Assistant | da fare |
 

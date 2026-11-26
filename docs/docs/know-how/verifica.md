@@ -62,7 +62,7 @@ formato dipendono dalla versione.
 | ERC | `--severity-error --severity-warning --exit-code-violations` |
 | Netlist | esporta e verifica le reti attese |
 | Export | PDF, SVG e distinta componenti |
-| Contenitore | render STL, piu' `check_case.py` sulle quote |
+| Contenitore | render STL, piu' `check_case.py` su quote, area di incollaggio, componenti connesse e chiusura |
 
 L'ERC fallisce **anche sui warning**. E' sostenibile perche' lo schema e' a
 zero violazioni: qualunque regressione si vede subito, invece di accumularsi

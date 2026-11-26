@@ -14,8 +14,8 @@ description: "A che punto e' il progetto e dove sono tracciati i lavori."
 | CI hardware | Verde, nel container KiCad 10.0.8 |
 | Scheletro del firmware | Progetto ESP-IDF che compila per esp32c6, switch RF dell'antenna |
 | CI firmware | Verde, nel container `espressif/idf:v5.5` |
-| Contenitore | Modello OpenSCAD parametrico, quote verificate contro il solido |
-| Render | Schema nel sito e nel README; contenitore in tre viste piu' una quotata e un modello ruotabile. Li produce la CI |
+| Contenitore | Modello OpenSCAD parametrico, quote verificate contro il solido; tappo USB-C legato al corpo, faccia di incollaggio dimensionata sul peso, coperchio trattenuto a scatto |
+| Render | Schema nel sito e nel README; contenitore in quattro viste piu' una quotata e un modello ruotabile. Li produce la CI |
 | Documentazione | Questo sito |
 
 ## Cosa fornisce questo progetto
@@ -39,7 +39,7 @@ ha proposal (perche'), spec (cosa deve fare), design (come) e task.
 | `pcb-kicad` | 16 di 20 | Layout del PCB, verifica di accoppiamento con il contenitore, render della scheda |
 | `firmware-bthome` | 14 di 19 | Acquisizione, pacchetto BTHome, ciclo di deep sleep |
 | `calibrazione-home-assistant` | 13 di 13 | Template di calibrazione, avvisi, grandezze derivate |
-| `contenitore-montaggio` | 11 di 11 | Tappo USB-C, superficie di incollaggio, chiusura a scatto |
+| `contenitore-montaggio` | 0 di 11, pronto da archiviare | Tappo USB-C, superficie di incollaggio, chiusura a scatto |
 | `schema-leggibile` | 8 di 10 | Disposizione dello schema nella GUI, lavoro da fare in KiCad |
 | `immagine-di-sviluppo` | 4 di 10 | Resta l'adozione dell'immagine nei workflow |
 

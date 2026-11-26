@@ -13,30 +13,42 @@ Le immagini le produce `tools/render.sh`, la stessa pipeline che gira in CI.
 Nessuna e' versionata: si rigenerano dal modello a ogni pubblicazione, e non
 possono quindi descrivere una versione precedente del pezzo.
 
-## Tre angolazioni, non dodici
+## Quattro angolazioni, non dodici
 
 Una vista in piu' costa un render intero e, se non mostra niente di nuovo,
-costringe solo a guardare due volte la stessa scatola. Queste tre sono
+costringe solo a guardare due volte la stessa scatola. Queste quattro sono
 scelte perche' ognuna mostra qualcosa che le altre nascondono.
 
-**Tre quarti dall'alto** — i due vani, il divisorio che non arriva in cima e
-il labbro del coperchio.
+**Tre quarti dall'alto** — i due vani, il divisorio che non arriva in cima,
+il labbro del coperchio e il tappo della USB-C parcheggiato di fianco alla
+scatola, legato dal suo cordino.
 
 <img src="/assets/render/case.png" alt="Contenitore in tre quarti: scatola con i due vani e coperchio affiancato"
      style="width:100%;background:#fff;padding:1rem;border-radius:6px;box-sizing:border-box">
 
-**Dal fondo** — l'apertura ottica svasata e la superficie che appoggia sul
-coperchio della tramoggia. Il pezzo e' capovolto, non guardato dal basso,
-per il motivo spiegato in fondo alla pagina: la luce di OpenSCAD non segue
-la camera.
+**Dal fondo** — l'apertura ottica svasata e la **faccia che si incolla**
+sotto il coperchio della tramoggia: dev'essere piana e continua, e qui si
+vede che lo e'. Il pezzo e' capovolto, non guardato dal basso, per il
+motivo spiegato in fondo alla pagina: la luce di OpenSCAD non segue la
+camera. Capovolto, pero', e' anche il verso in cui il contenitore viene
+montato davvero.
 
 <img src="/assets/render/case-sotto.png" alt="Contenitore capovolto: fondo con il foro ottico svasato"
      style="width:100%;background:#fff;padding:1rem;border-radius:6px;box-sizing:border-box">
 
-**Lato USB-C** — l'apertura sulla parete corta, che dall'alto si intuisce
-appena.
+**Lato USB-C** — l'apertura sulla parete corta e il tappo che la chiude,
+che dall'alto si intuiscono appena. Il tappo si stampa in piedi, con la
+flangia sul piano e la spina verso l'alto.
 
-<img src="/assets/render/case-usb.png" alt="Contenitore dal lato dell'apertura USB-C"
+<img src="/assets/render/case-usb.png" alt="Contenitore dal lato dell'apertura USB-C, con il tappo parcheggiato"
+     style="width:100%;background:#fff;padding:1rem;border-radius:6px;box-sizing:border-box">
+
+**Coperchio da sotto** — le due finestre in cui entrano i dentini della
+battuta e la luce per la USB-C. Dall'alto il coperchio e' una piastra
+liscia: senza questa vista non si vedrebbe che cosa lo tiene chiuso a
+testa in giu'.
+
+<img src="/assets/render/case-coperchio.png" alt="Coperchio capovolto: labbro con le finestre dei dentini e la luce per la USB-C"
      style="width:100%;background:#fff;padding:1rem;border-radius:6px;box-sizing:border-box">
 
 ## Le quote stanno nel modello, non sull'immagine
@@ -91,7 +103,7 @@ Il visualizzatore e' scritto su misura, WebGL senza librerie, e sta in
 | | |
 |---|---|
 | `stl-viewer.js` | 13 kB di sorgente commentato, **5 kB** compressi |
-| `case.stl` | 63 kB, **13 kB** compressi |
+| `case.stl` | 71 kB, **15 kB** compressi |
 | three.js, per confronto | oltre 600 kB di libreria minificata |
 
 La scelta non e' nata dal peso ma dal vincolo: **il sito non dipende da
@@ -145,12 +157,13 @@ le importa `include`, non `use`. Ma `include` esegue anche il codice in
 coda al file incluso, che **emette il pezzo**, e quella geometria non si
 puo' piu' spostare ne' ruotare.
 
-Da qui i due file in `enclosure/viste/`, diversi apposta:
+Da qui i tre file in `enclosure/viste/`, diversi apposta:
 
 | File | Serve | Come |
 |---|---|---|
 | `case-quote.scad` | le variabili, per quotare | `include`, e il pezzo resta dov'e' |
-| `case-sotto.scad` | ruotare il pezzo | `use`, e lo si richiama a mano |
+| `case-sotto.scad` | ruotare la scatola | `use`, e la si richiama a mano |
+| `case-coperchio.scad` | ruotare il coperchio | `use`, idem |
 
 Con `include` c'e' un secondo appiglio utile: in OpenSCAD **l'ultima
 assegnazione di una variabile nell'ambito vince**, anche sulle righe
