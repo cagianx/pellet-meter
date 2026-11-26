@@ -10,9 +10,9 @@
 # Lo stesso script gira in locale e nel workflow docs: una sola definizione
 # di "come si fa un render", non due che divergono.
 #
-# Quello che non esiste ancora viene saltato con un avviso: oggi e' il caso
-# del PCB, che e' deliberatamente rimandato. Quello che esiste ma non si
-# riesce a renderizzare e' un errore, e con --strict lo e' sempre.
+# Quello che non esiste ancora viene saltato con un avviso; oggi non manca
+# niente. Quello che esiste ma non si riesce a renderizzare e' un errore, e
+# con --strict lo e' sempre.
 
 set -euo pipefail
 
@@ -185,7 +185,7 @@ else
 
   vista_pcb pcb-top        --side top
   vista_pcb pcb-bottom     --side bottom
-  vista_pcb pcb-3d         --rotate '-35,0,30' --perspective --floor
+  vista_pcb pcb-3d         --rotate '-35,0,30' --perspective --floor --zoom 0.8
   vista_pcb pcb-lato       --side front --zoom 1.3
 
   # Il modello a colori, per chi lo vuole aprire in un programma 3D. I
