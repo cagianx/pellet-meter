@@ -5,6 +5,15 @@
 - [ ] 1.1 Scegliere il footprint dello XIAO sul PCB, motivando in docs/ l'effetto su altezza, recuperabilita' e saldatura
 - [ ] 1.2 Definire come si seleziona fra MOSFET e pilotaggio diretto, e cosa comporta per il firmware
 
+## 1bis. Modelli tridimensionali mancanti
+
+Senza questi il render mostra una scheda incompleta e la verifica di
+accoppiamento misura meno di quello che dichiara.
+
+- [ ] 1bis.1 Il footprint `XIAO-ESP32-C6-DIP` porta modelli per cinque altri XIAO ma non per il C6, e li cerca sotto `${AMZPATH}`, che il progetto non definisce: decidere se procurare il modello, usare un altro XIAO come sostituto geometrico (stesso ingombro 21 x 17,5) o modellare un solido semplice
+- [ ] 1bis.2 Il breakout VL53L1X e' montato come header a 6 pin: in 3D compare l'header, non la scheda. Dare un corpo al breakout, altrimenti il vano che lo ospita non viene verificato
+- [ ] 1bis.3 Dichiarare in docs/ quali modelli sono sostituti e quali reali
+
 ## 2. Layout
 
 - [ ] 2.1 Assegnare i footprint e importare la netlist dallo schema
@@ -18,10 +27,14 @@
 - [ ] 3.2 Controllo che la connettivita' del PCB corrisponda allo schema
 - [ ] 3.3 DRC e corrispondenza eseguiti in CI con la stessa severita' dell'ERC
 
-## 4. Render
+## 4. Render e accoppiamento
 
-- [ ] 4.1 Render da piu' prospettive nella pipeline esistente
-- [ ] 4.2 Pagina del PCB in docs/ con i render
+- [ ] 4.1 Render da piu' prospettive con `kicad-cli pcb render`, usando `--rotate`, `--side` e `--perspective`
+- [ ] 4.2 Export `glb` del PCB per la vista interattiva, con lo stesso visualizzatore del contenitore
+- [ ] 4.3 Export `stl` della scheda con i componenti, importato in OpenSCAD per la verifica di accoppiamento
+- [ ] 4.4 Verifica automatica che la scheda stia nel vano, che fallisca dicendo di quanto eccede e in quale direzione
+- [ ] 4.5 Provare la verifica sul caso che deve fallire: una scheda volutamente troppo grande
+- [ ] 4.6 Pagina del PCB in docs/ con render, vista interattiva ed esito dell'accoppiamento
 
 ## 5. Documentazione
 
