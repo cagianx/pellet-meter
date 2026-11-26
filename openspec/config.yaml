@@ -5,6 +5,25 @@ context: |
   All artifacts must be written in italian.
   Keep OpenSpec structural headings and SHALL/MUST keywords in English.
 
+  Progetto: pellet-meter, sensore di livello pellet a batteria.
+  Seeed XIAO ESP32C6 + VL53L1X (ToF, I2C) + LiPo, BLE advertising BTHome v2
+  verso Home Assistant. Essendo alimentato a batteria, ogni decisione va
+  pesata sul consumo. La calibrazione sta in Home Assistant, non nel firmware.
+
+  Regole del progetto:
+  - Il know-how va conservato in docs/ (sito docmd), non solo nei commit:
+    motivazioni delle scelte, tentativi falliti, trappole degli strumenti e
+    numeri misurati.
+  - Le modifiche passano per OpenSpec: prima il change, poi l'implementazione,
+    poi l'archiviazione che aggiorna le spec.
+  - Vedi CLAUDE.md nella radice per i comandi di verifica e i vincoli tecnici
+    gia' noti.
+
+rules:
+  tasks:
+    - Se il lavoro produce know-how riutilizzabile, includere un task
+      esplicito che lo scrive in docs/.
+
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.
 # Example:

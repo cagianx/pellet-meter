@@ -1,0 +1,89 @@
+name: docs
+
+# Costruisce il sito di documentazione e lo pubblica su GitHub Pages.
+# Basato sul workflow generato da 'docmd deploy --github-pages', adattato
+# perche' il progetto docmd sta in docs/ e non nella radice del repo.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build e validazione
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # il plugin git di docmd legge la storia dei commit per pagina
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+
+      - name: Installa le dipendenze
+        working-directory: docs
+        # npm ci rispetta il lockfile: la CI costruisce con le stesse
+        # versioni usate in locale
+        run: npm ci
+
+      - name: Build del sito
+        working-directory: docs
+        run: npx docmd build
+
+      - name: Validazione dei link interni
+        working-directory: docs
+        # Solo link interni e file referenziati: i link esterni sono lenti
+        # e soggetti a rate limit, farebbero fallire la CI per motivi che
+        # non dipendono da noi.
+        run: npx docmd validate --strict
+
+      - name: Il sito non deve essere vuoto
+        working-directory: docs
+        run: |
+          pagine=$(find site -name '*.html' | wc -l)
+          echo "pagine generate: $pagine"
+          if [ "$pagine" -lt 5 ]; then
+            echo "troppe poche pagine: qualcosa non ha funzionato"
+            exit 1
+          fi
+
+      - name: Prepara l'artefatto per Pages
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/site
+
+  deploy:
+    name: Pubblicazione su Pages
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

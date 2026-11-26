@@ -24,3 +24,6 @@ __pycache__/
 
 # Report generati
 *.rpt
+
+# Sito generato da docmd
+docs/site/

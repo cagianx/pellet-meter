@@ -91,6 +91,25 @@ queste sono le cause trovate finora.
 - Le librerie di sistema si referenziano con `${KICAD10_SYMBOL_DIR}` e
   `${KICAD10_FOOTPRINT_DIR}`, quelle di progetto con `${KIPRJMOD}`.
 
+## Regole
+
+Due regole non negoziabili, perche' il lavoro su questo progetto e' distribuito
+su conversazioni diverse che non condividono memoria: il repo e' l'unico punto
+di passaggio.
+
+1. **Il know-how va conservato in `docs/`.** Tutto quello che si impara
+   lavorando — perche' una scelta e' stata fatta, cosa e' stato provato e non
+   funziona, le trappole degli strumenti, i numeri misurati — finisce nel sito
+   di documentazione, non solo nei messaggi di commit o in una conversazione.
+   Se una cosa e' stata capita e non e' scritta in `docs/`, e' persa.
+
+2. **Le modifiche passano per OpenSpec.** Prima si propone un change in
+   `openspec/changes/<nome>/` con proposal, spec, design e task; poi si
+   implementa; poi si archivia aggiornando le spec in `openspec/specs/`.
+   Non si inizia a modificare il progetto senza un change che dica cosa si sta
+   cambiando e perche'. Le correzioni banali e il lavoro gia' tracciato nei
+   task di un change aperto non richiedono un change nuovo.
+
 ## Convenzioni di lavoro
 
 - Commit frequenti; push quando si arriva a un punto stabile e verificato.
