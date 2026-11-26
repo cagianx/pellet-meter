@@ -1,0 +1,137 @@
+name: hardware
+
+# Verifica lo schema elettrico e il contenitore 3D a ogni modifica.
+# Gira nell'immagine ufficiale KiCad 10.0.8, la stessa versione usata in
+# locale: evita che la CI veda un KiCad diverso da quello di sviluppo.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'kicad/**'
+      - 'enclosure/**'
+      - '.github/workflows/hardware.yml'
+  pull_request:
+    paths:
+      - 'kicad/**'
+      - 'enclosure/**'
+      - '.github/workflows/hardware.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  schema:
+    name: Schema — ERC, netlist, export
+    runs-on: ubuntu-latest
+    container:
+      image: kicad/kicad:10.0.8-full
+      options: --user root
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: ERC
+        working-directory: kicad
+        # --exit-code-violations fa fallire anche sui warning: in locale lo
+        # schema e' a zero violazioni, quindi qualunque regressione si vede.
+        run: |
+          mkdir -p out
+          kicad-cli sch erc \
+            --severity-error --severity-warning \
+            --exit-code-violations \
+            -o out/erc.rpt pellet-meter.kicad_sch
+
+      - name: Rapporto ERC
+        if: always()
+        working-directory: kicad
+        run: cat out/erc.rpt || echo "nessun rapporto prodotto"
+
+      - name: Netlist
+        working-directory: kicad
+        run: |
+          kicad-cli sch export netlist --format kicadsexpr \
+            -o out/pellet-meter.net pellet-meter.kicad_sch
+
+      - name: Verifica che le reti siano quelle attese
+        working-directory: kicad
+        # L'ERC pulito non basta: un errore di battitura in un'etichetta crea
+        # una rete isolata senza far scattare nessun errore.
+        run: python3 tools/check_netlist.py out/pellet-meter.net
+
+      - name: Esporta PDF e SVG dello schema
+        working-directory: kicad
+        run: |
+          kicad-cli sch export pdf --black-and-white \
+            -o out/pellet-meter-schema.pdf pellet-meter.kicad_sch
+          kicad-cli sch export svg --black-and-white --exclude-drawing-sheet \
+            -o out/ pellet-meter.kicad_sch
+
+      - name: Distinta componenti
+        working-directory: kicad
+        run: |
+          kicad-cli sch export bom \
+            --fields 'Reference,Value,Footprint,${QUANTITY}' \
+            --group-by 'Value,Footprint' \
+            -o out/pellet-meter-bom.csv pellet-meter.kicad_sch
+          cat out/pellet-meter-bom.csv
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: schema
+          path: kicad/out/
+          if-no-files-found: error
+
+  contenitore:
+    name: Contenitore — render STL
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Ci sono sorgenti OpenSCAD?
+        id: sorgenti
+        run: |
+          if compgen -G 'enclosure/*.scad' > /dev/null; then
+            echo "presenti=si" >> "$GITHUB_OUTPUT"
+            echo "Trovati: $(ls enclosure/*.scad | tr '\n' ' ')"
+          else
+            echo "presenti=no" >> "$GITHUB_OUTPUT"
+            echo "Nessun .scad in enclosure/: il contenitore non e' ancora stato disegnato, salto."
+          fi
+
+      - name: Installa OpenSCAD
+        if: steps.sorgenti.outputs.presenti == 'si'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends openscad
+
+      - name: Controllo sintassi e render STL
+        if: steps.sorgenti.outputs.presenti == 'si'
+        working-directory: enclosure
+        # OpenSCAD non esce con codice diverso da zero su tutti i problemi:
+        # per questo si controlla anche che il file STL esista e non sia vuoto.
+        run: |
+          mkdir -p out
+          stato=0
+          for f in *.scad; do
+            nome="${f%.scad}"
+            echo "::group::render $f"
+            if ! openscad -o "out/${nome}.stl" "$f" 2>&1; then
+              echo "render fallito: $f"; stato=1
+            elif [ ! -s "out/${nome}.stl" ]; then
+              echo "STL vuoto o assente: out/${nome}.stl"; stato=1
+            else
+              echo "ok: out/${nome}.stl ($(stat -c%s "out/${nome}.stl") byte)"
+            fi
+            echo "::endgroup::"
+          done
+          exit $stato
+
+      - uses: actions/upload-artifact@v4
+        if: steps.sorgenti.outputs.presenti == 'si'
+        with:
+          name: contenitore
+          path: enclosure/out/
+          if-no-files-found: error
