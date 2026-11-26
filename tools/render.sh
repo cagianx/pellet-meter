@@ -276,19 +276,22 @@ else
     fi
     rm -f "$sonda" "$sonda_stl"
 
-    # Le angolazioni sono tre, scelte perche' mostrano cose diverse: una
-    # vista in piu' costa un render intero e, se non aggiunge niente,
+    # Le angolazioni sono quattro, scelte perche' mostrano cose diverse:
+    # una vista in piu' costa un render intero e, se non aggiunge niente,
     # costringe solo a guardare due volte la stessa scatola.
     #
     # tre quarti   i due vani, il divisorio e il labbro del coperchio
-    # dal basso    foro ottico svasato e superficie d'appoggio (il pezzo e'
+    # dal basso    foro ottico svasato e faccia di incollaggio (il pezzo e'
     #              capovolto nel modello, vedi viste/case-sotto.scad)
-    # lato USB-C   l'apertura sulla parete corta, che dall'alto si intuisce
-    #              appena
+    # lato USB-C   l'apertura sulla parete corta e il tappo parcheggiato,
+    #              che dall'alto si intuiscono appena
+    # coperchio    le finestre dei dentini e la luce per la USB-C, che
+    #              stanno tutte sulla faccia inferiore del coperchio
     vista case          enclosure/case.scad             60  30 p
     vista case-sotto    enclosure/viste/case-sotto.scad 60 210 p
     vista case-usb      enclosure/case.scad             80 250 p \
                         -D 'pezzo="scatola"'
+    vista case-coperchio enclosure/viste/case-coperchio.scad 55 210 p
     # La quarta non e' un'angolazione in piu': e' la stessa scatola con le
     # quote d'ingombro, che vengono dai parametri del modello.
     vista case-quote    enclosure/viste/case-quote.scad 60  30 o
