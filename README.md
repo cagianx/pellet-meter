@@ -27,9 +27,13 @@ della batteria che il dispositivo.
 | | |
 |---|---|
 | Schema elettrico | fatto — ERC pulito, netlist verificata |
-| Contenitore 3D | in corso |
+| Contenitore 3D | da fare |
 | Firmware | da fare |
-| Misure sul serbatoio reale | da fare |
+| Configurazione Home Assistant | da fare |
+
+Il repo fornisce **il progetto**, non la realizzazione: schema, firmware,
+modello del contenitore e configurazione di Home Assistant. Comprare,
+saldare, stampare e installare sono attivita' di chi costruisce.
 
 La calibrazione (distanza ↔ percentuale di riempimento) si fa **in Home
 Assistant**, non nel firmware: ricalibrare non richiede un reflash.

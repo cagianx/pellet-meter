@@ -14,23 +14,28 @@ description: "A che punto e' il progetto e dove sono tracciati i lavori."
 | CI hardware | Verde, nel container KiCad 10.0.8 |
 | Documentazione | Questo sito |
 
+## Cosa fornisce questo progetto
+
+Il repo fornisce **il progetto**, non la realizzazione: schema elettrico,
+firmware, modello del contenitore e configurazione di Home Assistant, con i
+criteri per verificarli.
+
+Comprare i componenti, saldare, stampare, misurare la tramoggia e installare
+sulla stufa sono attivita' di chi costruisce, e non sono tracciate qui. I
+criteri di accettazione corrispondenti stanno nelle spec dei change: dicono
+cosa deve risultare vero, senza possedere il gesto manuale che lo verifica.
+
 ## Da fare
 
 Il lavoro e' tracciato con **OpenSpec**, in `openspec/changes/`. Ogni change
 ha proposal (perche'), spec (cosa deve fare), design (come) e task.
 
-I change sono elencati **in ordine di dipendenza**, non di importanza.
-
-| # | Change | Task | Contenuto |
-|---|---|---|---|
-| 1 | `prototipo-hardware` | 18 | Acquisto, breadboard, **prova sul pellet reale**, saldatura |
-| 2 | `firmware-bthome` | 16 | Ciclo deep sleep, misura, pacchetto BTHome, consumi reali |
-| 3 | `contenitore-3d` | 12 | Misure, modello OpenSCAD parametrico, verifica STL |
-| 4 | `calibrazione-home-assistant` | 10 | Template di calibrazione, avvisi, grandezze derivate |
-| — | `schema-leggibile` | 10 | Disposizione dello schema nella GUI, pubblicazione nel sito |
-
-`schema-leggibile` e' fuori ordine perche' non dipende da nulla: si puo'
-fare in qualsiasi momento.
+| Change | Task | Contenuto |
+|---|---|---|
+| `firmware-bthome` | 19 | Ciclo deep sleep, misura, pacchetto BTHome |
+| `contenitore-3d` | 13 | Modello OpenSCAD parametrico, verifica del render |
+| `calibrazione-home-assistant` | 12 | Template di calibrazione, avvisi, grandezze derivate |
+| `schema-leggibile` | 10 | Disposizione dello schema nella GUI, pubblicazione nel sito |
 
 ```bash
 openspec list                 # stato dei change
@@ -38,25 +43,18 @@ openspec show <nome>          # un change nel dettaglio
 openspec validate --all
 ```
 
-## Da dove si comincia
+Nessuno dei quattro dipende dagli altri per iniziare. `firmware-bthome` ha
+tre decisioni da chiudere prima di scrivere codice, elencate qui sotto.
 
-Due cose bloccano tutto il resto, e vanno fatte sul posto con la stufa
-davanti.
+## I numeri che mancano
 
-**1. La prova del sensore sul pellet reale** (`prototipo-hardware`, gruppo 3).
-E' la verifica che l'intero progetto sta in piedi: un ToF dentro una
-tramoggia deve vedersela con polvere, riflessi, coperchio chiuso e superficie
-a cono. Se il VL53L1X non regge, cambia il sensore — e con lui schema,
-firmware e contenitore. Per questo viene prima del firmware completo: basta
-uno sketch che stampi la distanza.
+Due valori non si possono ricavare a tavolino e vanno inseriti da chi
+installa: la distanza dal coperchio al pellet **a serbatoio pieno** e **a
+serbatoio vuoto**. Serve anche sapere se il fondo e' a imbuto, perche' in
+quel caso la conversione lineare sbaglia.
 
-**2. Misurare la tramoggia.** Distanza dal coperchio al pellet a serbatoio
-pieno e vuoto, e forma del fondo. Senza quei numeri il contenitore si disegna
-su quote da datasheet e la calibrazione resta con valori segnaposto. E' il
-primo task sia di `contenitore-3d` sia di `calibrazione-home-assistant`, e
-non e' un caso.
-
-Finche' queste due non sono fatte, tre change su cinque lavorano su ipotesi.
+Il progetto non li misura: li tratta come parametri, e il compito dei change
+e' renderli facili da inserire e da cambiare.
 
 ## Decisioni ancora aperte
 

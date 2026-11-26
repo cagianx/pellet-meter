@@ -34,9 +34,11 @@ l'autoscarica della batteria che il dispositivo.
 | Schema elettrico | fatto, ERC pulito e reti verificate |
 | Contenitore 3D | da fare |
 | Firmware | da fare |
-| Misure sulla tramoggia reale | da fare |
+| Configurazione Home Assistant | da fare |
 
-Lo stato aggiornato e i lavori aperti stanno in [Stato e lavori aperti](/stato/).
+Il repo fornisce **il progetto**, non la realizzazione: comprare, saldare,
+stampare e installare sono attivita' di chi costruisce. Lo stato aggiornato e
+i lavori aperti stanno in [Stato e lavori aperti](/stato/).
 
 ## Perche' questo sito esiste
 

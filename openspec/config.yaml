@@ -10,6 +10,13 @@ context: |
   verso Home Assistant. Essendo alimentato a batteria, ogni decisione va
   pesata sul consumo. La calibrazione sta in Home Assistant, non nel firmware.
 
+  Il repo fornisce il progetto, non la realizzazione: schema, firmware,
+  modello del contenitore, configurazione Home Assistant. Comprare, saldare,
+  stampare, misurare la tramoggia e installare sono attivita' di chi
+  costruisce e NON vanno tracciate come task. I criteri di accettazione
+  stanno nelle spec. Un task descrive cosa si produce (codice, modello,
+  configurazione, documentazione), non cosa si prova sul banco.
+
   Regole del progetto:
   - Il know-how va conservato in docs/ (sito docmd), non solo nei commit:
     motivazioni delle scelte, tentativi falliti, trappole degli strumenti e

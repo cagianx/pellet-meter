@@ -91,6 +91,22 @@ queste sono le cause trovate finora.
 - Le librerie di sistema si referenziano con `${KICAD10_SYMBOL_DIR}` e
   `${KICAD10_FOOTPRINT_DIR}`, quelle di progetto con `${KIPRJMOD}`.
 
+## Cosa fornisce questo progetto
+
+Il repo fornisce **il progetto**, non la realizzazione: schema elettrico,
+firmware, modello del contenitore e configurazione di Home Assistant.
+
+Comprare i componenti, saldare, stampare, misurare la tramoggia e installare
+sulla stufa sono attivita' di chi costruisce: **non vanno tracciate come
+task**. I criteri di accettazione corrispondenti stanno nelle spec dei
+change, che dicono cosa deve risultare vero senza possedere il gesto manuale
+che lo verifica.
+
+In pratica, quando si scrive un task: descrivere cosa si **produce**
+(codice, modello, configurazione, documentazione), non cosa si prova sul
+banco. "Implementare la lettura del sensore" si', "verificare sul dispositivo
+che il sensore legga" no.
+
 ## Regole
 
 Due regole non negoziabili, perche' il lavoro su questo progetto e' distribuito
