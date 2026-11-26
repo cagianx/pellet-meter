@@ -9,10 +9,16 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
+      - 'tools/**'
+      - 'kicad/**'
+      - 'enclosure/**'
       - '.github/workflows/docs.yml'
   pull_request:
     paths:
       - 'docs/**'
+      - 'tools/**'
+      - 'kicad/**'
+      - 'enclosure/**'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
 
@@ -26,14 +32,53 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  render:
+    name: Immagini — schema, PCB, contenitore
+    runs-on: ubuntu-latest
+    # Stessa immagine del workflow hardware: il render dello schema deve
+    # venire dallo stesso KiCad che fa ERC e netlist.
+    container:
+      image: kicad/kicad:10.0.8-full
+      options: --user root
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Strumenti di contorno
+        # librsvg per il PNG, ImageMagick per il ritaglio. Openscad solo se
+        # il contenitore esiste: e' un pacchetto grosso e oggi non serve.
+        run: |
+          apt-get update -qq
+          apt-get install -y --no-install-recommends \
+            librsvg2-bin imagemagick python3
+          if compgen -G 'enclosure/*.scad' > /dev/null; then
+            apt-get install -y --no-install-recommends openscad
+          fi
+
+      - name: Render
+        run: ./tools/render.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: render
+          path: docs/docs/assets/render/
+          if-no-files-found: error
+
   build:
     name: Build e validazione
     runs-on: ubuntu-latest
+    needs: render
 
     steps:
       # checkout superficiale: il plugin git di docmd e' disattivato, quindi
       # la storia dei commit non serve al build
       - uses: actions/checkout@v5
+
+      - name: Riprendi le immagini renderizzate
+        uses: actions/download-artifact@v4
+        with:
+          name: render
+          path: docs/docs/assets/render/
 
       - uses: actions/setup-node@v4
         with:

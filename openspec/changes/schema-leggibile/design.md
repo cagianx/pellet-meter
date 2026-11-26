@@ -24,14 +24,28 @@ e' l'unica fonte di verita'.
 
 - **Pubblicazione via SVG**, non PNG: e' gia' prodotto dalla CI, scala senza
   sgranare e pesa poco.
+- **L'SVG arriva nel sito da un job dedicato dello stesso workflow `docs`.**
+  Delle tre strade possibili — committarlo, farlo produrre al workflow docs,
+  passarlo tra i due workflow — vince la seconda in una variante che evita
+  il suo difetto: un job `render` nel container KiCad produce le immagini e
+  le passa al job `build` come artefatto *dello stesso workflow*, che e' un
+  meccanismo nativo. Niente file generati versionati, e niente artefatti da
+  rincorrere tra workflow diversi, che e' la parte fragile.
+- **Un solo script, `tools/render.sh`**, usato identico in locale e in CI:
+  due definizioni di "come si fa un render" divergono il giorno dopo.
+- **Il README usa il PNG, il sito l'SVG.** Su GitHub le immagini passano da
+  un proxy e il README non puo' usare percorsi relativi a file non
+  versionati: punta all'URL del PNG pubblicato su Pages. Il PNG e' anche la
+  forma che non puo' non renderizzare.
+- **Il ritaglio si misura sui pixel, non sulle coordinate dell'SVG.**
+  Il disegno occupa il 24% di un A3, quindi l'inquadratura va stretta sul
+  contenuto; il bounding box viene da ImageMagick sul PNG e viene riportato
+  sul `viewBox`. Interpretare i path dell'SVG significherebbe ricostruire
+  archi e trasformazioni, cioe' sbagliare in silenzio.
 
 ## Open Questions
 
-- **Come arriva l'SVG nel sito**: committarlo in `docs/` accettando un file
-  generato dentro al repo, farlo produrre al workflow docs installando KiCad,
-  oppure far passare l'artefatto tra i due workflow. La prima e' la piu'
-  semplice e la meno fragile, ma contraddice la regola di non versionare le
-  uscite generate. Da decidere.
+Nessuna.
 
 ## Risks / Trade-offs
 

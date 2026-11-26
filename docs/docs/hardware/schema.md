@@ -8,8 +8,25 @@ description: "Il progetto KiCad, come e' fatto e come si verifica."
 Progetto **KiCad 10** in `kicad/`. Il file `pellet-meter.kicad_sch` e' la
 fonte di verita'.
 
-Il PDF, l'SVG e la distinta componenti sono prodotti dalla CI a ogni
-modifica, come artefatto **`schema`** del workflow `hardware`
+<a href="/assets/render/schema.svg">
+  <img src="/assets/render/schema.svg" alt="Schema elettrico del pellet-meter"
+       style="width:100%;background:#fff;padding:1rem;border-radius:6px;box-sizing:border-box">
+</a>
+
+[Apri l'SVG a tutta pagina](/assets/render/schema.svg) ·
+[Scarica il PDF da stampare](/assets/render/schema.pdf)
+
+:::note
+Il fondo bianco e' messo apposta: KiCad esporta tratto nero su sfondo
+trasparente, e in tema scuro lo schema sparirebbe. Da telefono conviene
+aprire l'SVG a tutta pagina e ingrandire: un A3 dentro la larghezza di uno
+schermo da telefono non si legge, e nessun accorgimento tipografico lo
+cambia.
+:::
+
+L'immagine e' **generata**, non versionata: la produce `tools/render.sh`,
+che gira in locale e nel workflow `docs`. Lo stesso script esporta anche il
+PDF e la distinta componenti resta un artefatto del workflow `hardware`
 ([ultimi run](https://github.com/cagianx/pellet-meter/actions)).
 
 ## Componenti
@@ -38,10 +55,25 @@ breakout con header.
 
 ## Lo schema e' corretto ma graficamente sbilanciato
 
-Va detto: i componenti sono ammassati in alto a sinistra con meta' foglio A3
-vuoto. E' stato generato via script per poter verificare le reti da riga di
-comando, e la disposizione non e' stata curata. Elettricamente e' verificato;
-esteticamente va sistemato a mano nella GUI.
+E' stato generato via script per poter verificare le reti da riga di comando,
+e la disposizione non e' stata curata. Elettricamente e' verificato;
+graficamente va sistemato a mano nella GUI, ed e' il change
+`schema-leggibile`.
+
+Il render ha reso misurabili i difetti, che a parole erano solo "e' da
+sistemare":
+
+| Difetto | Dove | Nota |
+|---|---|---|
+| Etichette `BAT_SENSE` sovrapposte | sul partitore, tra R1 e R2 | due etichette della stessa rete finiscono una sopra l'altra: illeggibili entrambe |
+| `GND` e `100nF` collisi | su C3, rete VSENS | il valore del condensatore si sovrappone all'etichetta di massa |
+| Disegno in un angolo | tutto il foglio | il contenuto occupa **234 × 129 mm**, il 24% di un A3 |
+
+Quei 234 × 129 mm starebbero in un **A4 orizzontale** (297 × 210), e ridurre
+il formato e' gia' previsto. Ma l'angolo in basso a destra del disegno
+arriva a (260, 182) mm, dove sull'A4 cade il **cartiglio**: ridurre il foglio
+senza prima spostare i blocchi farebbe finire il disegno sopra il riquadro
+delle informazioni. Prima la disposizione, poi il formato.
 
 ## Come si verifica
 

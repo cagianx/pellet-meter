@@ -9,6 +9,8 @@ Nessuna connessione BLE, nessun Wi-Fi, nessuna integrazione custom: il
 dispositivo si risveglia, misura, trasmette un pacchetto di advertising e
 torna in deep sleep. Home Assistant lo riconosce da solo.
 
+![Schema elettrico del pellet-meter](https://cagianx.github.io/pellet-meter/assets/render/schema.png)
+
 ## Hardware
 
 | | |

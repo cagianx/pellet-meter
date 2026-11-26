@@ -72,12 +72,25 @@ idf.py build
 idf.py -p /dev/ttyACM0 flash monitor
 ```
 
-Senza ESP-IDF installato, la stessa cosa nell'immagine ufficiale:
+Senza ESP-IDF installato, la stessa cosa nell'immagine ufficiale. Con
+**podman**, che non ha daemon e gira senza privilegi:
 
 ```bash
-docker run --rm -v "$PWD":/project -w /project espressif/idf:v5.5 \
-  idf.py build
+podman run --rm -v "$PWD":/project:Z -w /project \
+  docker.io/espressif/idf:v5.5 idf.py build
 ```
+
+Con docker il comando e' lo stesso sostituendo `podman` con `docker`, ma
+serve il daemon attivo e l'utente nel gruppo `docker` — che equivale a dare
+privilegi di root. Per compilare firmware non c'e' motivo di pagare quel
+prezzo.
+
+:::note
+Il suffisso `:Z` sul volume serve con SELinux attivo e non da' fastidio
+altrove. Il flash invece **non** si fa dal container: servirebbe passargli
+`/dev/ttyACM0`, e per un gesto che si fa a mano conviene usare l'ESP-IDF
+installato in locale.
+:::
 
 :::note
 La porta e' `/dev/ttyACM0`, non `/dev/ttyUSB0`: sullo XIAO ESP32C6 l'USB-C va

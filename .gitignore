@@ -27,3 +27,7 @@ __pycache__/
 
 # Sito generato da docmd
 docs/site/
+
+# Immagini prodotte da tools/render.sh: le rigenera chi serve, e in CI il
+# workflow docs le produce prima del build
+docs/docs/assets/render/

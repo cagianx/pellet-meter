@@ -17,6 +17,8 @@ kicad/              progetto KiCad 10
   tools/                    script che hanno generato lo schema (bootstrap)
   out/                      PDF/SVG esportati — generati, non versionati
 enclosure/          contenitore parametrico OpenSCAD
+firmware/           progetto ESP-IDF (C17, target esp32c6)
+tools/              render.sh — immagini per il sito e il README
 docs/               sito di documentazione (docmd) pubblicato su GitHub Pages
 ```
 
@@ -38,6 +40,14 @@ kicad-cli sch export pdf --black-and-white -o out/pellet-meter-schema.pdf pellet
 
 # STL del contenitore — dalla cartella enclosure/
 openscad -o out/case.stl case.scad
+
+# immagini per il sito e il README — dalla radice del repo
+./tools/render.sh
+
+# firmware — dalla cartella firmware/, con l'ambiente ESP-IDF 5.x attivo
+idf.py build
+# oppure, senza ESP-IDF installato (podman gira senza privilegi):
+podman run --rm -v "$PWD":/p:Z -w /p docker.io/espressif/idf:v5.5 idf.py build
 ```
 
 Le reti attese sono 7: `GND` (9 nodi), `BAT_SENSE` (4), `VSENS` (4),
