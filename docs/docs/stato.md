@@ -15,7 +15,7 @@ description: "A che punto e' il progetto e dove sono tracciati i lavori."
 | Scheletro del firmware | Progetto ESP-IDF che compila per esp32c6, switch RF dell'antenna |
 | CI firmware | Verde, nel container `espressif/idf:v5.5` |
 | Contenitore | Modello OpenSCAD parametrico, quote verificate contro il solido |
-| Render | Schema e contenitore pubblicati nel sito e nel README, prodotti dalla CI |
+| Render | Schema nel sito e nel README; contenitore in tre viste piu' una quotata e un modello ruotabile. Li produce la CI |
 | Documentazione | Questo sito |
 
 ## Cosa fornisce questo progetto

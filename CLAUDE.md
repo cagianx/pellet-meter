@@ -17,6 +17,9 @@ kicad/              progetto KiCad 10
   tools/check_netlist.py    verifica le reti nodo per nodo
   out/                      PDF/SVG esportati — generati, non versionati
 enclosure/          contenitore parametrico OpenSCAD
+  case.scad                 il pezzo: unica fonte di verita' della geometria
+  lib/quote.scad            moduli di quotatura usati dai render quotati
+  viste/                    viste derivate, pubblicate dal sito
 firmware/           progetto ESP-IDF (C17, target esp32c6)
 tools/              render.sh (immagini), check_case.py (quote del contenitore)
 docs/               sito di documentazione (docmd) pubblicato su GitHub Pages
