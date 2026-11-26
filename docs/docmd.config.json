@@ -109,6 +109,11 @@
           "title": "Come si verifica",
           "path": "/know-how/verifica/",
           "icon": "check-check"
+        },
+        {
+          "title": "Ambiente di sviluppo",
+          "path": "/know-how/ambiente/",
+          "icon": "container"
         }
       ]
     },

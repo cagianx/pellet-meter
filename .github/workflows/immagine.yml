@@ -1,0 +1,64 @@
+name: immagine
+
+# Costruisce e pubblica l'immagine dell'ambiente di sviluppo su GHCR.
+#
+# Si attiva solo quando cambia la sua definizione: il contenuto cambia di
+# rado, e ricostruirla a ogni commit costerebbe minuti a ogni push per
+# niente. Gli altri workflow usano quella gia' pubblicata.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Dockerfile'
+      - '.github/workflows/immagine.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMMAGINE: ghcr.io/${{ github.repository_owner }}/pellet-meter-dev
+
+jobs:
+  pubblica:
+    name: Costruisci e pubblica
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Costruisci e pubblica
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          # Due tag: 'latest' per chi la usa, lo sha per poter tornare
+          # indietro sapendo esattamente a cosa.
+          tags: |
+            ${{ env.IMMAGINE }}:latest
+            ${{ env.IMMAGINE }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: L'immagine pubblicata contiene davvero gli strumenti
+        # Il build che passa dimostra che il Dockerfile e' valido, non che
+        # quello che e' finito nel registry sia utilizzabile. Qui si scarica
+        # l'immagine appena pubblicata e le si chiede conto.
+        run: |
+          docker run --rm "${IMMAGINE}:${GITHUB_SHA}" bash -c '
+            set -eu
+            for t in kicad-cli openscad xvfb-run rsvg-convert convert identify python3 node npm git; do
+              printf "%-13s %s\n" "$t" "$(command -v "$t")"
+            done
+          '

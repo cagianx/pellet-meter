@@ -2,13 +2,13 @@
 
 ## 1. Immagine
 
-- [ ] 1.1 `Dockerfile` basato su `kicad/kicad:10.0.8-full` con OpenSCAD, xvfb, librsvg, ImageMagick, Python e Node
-- [ ] 1.2 Versioni fissate dove conta, e una riga di commento che dice a cosa serve ciascuno strumento
-- [ ] 1.3 Un controllo dentro l'immagine che verifica la presenza di tutti gli strumenti attesi
+- [x] 1.1 `Dockerfile` basato su `kicad/kicad:10.0.8-full` con OpenSCAD, xvfb, librsvg, ImageMagick, Python e Node
+- [x] 1.2 Versioni fissate dove conta, e una riga di commento che dice a cosa serve ciascuno strumento
+- [x] 1.3 Un controllo dentro l'immagine che verifica la presenza di tutti gli strumenti attesi
 
 ## 2. Pubblicazione
 
-- [ ] 2.1 Workflow che costruisce e pubblica su GHCR, attivato dal percorso del `Dockerfile`
+- [x] 2.1 Workflow che costruisce e pubblica su GHCR, attivato dal percorso del `Dockerfile`
 - [ ] 2.2 Verificare che l'immagine pubblicata contenga davvero gli strumenti, non solo che il build passi
 
 ## 3. Adozione
@@ -19,5 +19,5 @@
 
 ## 4. Documentazione
 
-- [ ] 4.1 Scrivere in docs/ come usare l'immagine in locale e come aggiungere uno strumento
-- [ ] 4.2 Registrare in docs/ la catena del guasto che ha motivato il change: shell scelta automaticamente, `compgen` assente sotto dash, installazione saltata in silenzio
+- [x] 4.1 Scrivere in docs/ come usare l'immagine in locale e come aggiungere uno strumento
+- [x] 4.2 Registrare in docs/ la catena del guasto che ha motivato il change: shell scelta automaticamente, `compgen` assente sotto dash, installazione saltata in silenzio
