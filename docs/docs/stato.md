@@ -24,6 +24,7 @@ ha proposal (perche'), spec (cosa deve fare), design (come) e task.
 | `contenitore-3d` | 12 | Misure, modello OpenSCAD parametrico, verifica STL |
 | `firmware-bthome` | 16 | Ciclo deep sleep, misura, pacchetto BTHome, consumi reali |
 | `calibrazione-home-assistant` | 10 | Template di calibrazione, avvisi, grandezze derivate |
+| `schema-leggibile` | 10 | Disposizione dello schema nella GUI, pubblicazione nel sito |
 
 ```bash
 openspec list                 # stato dei change
