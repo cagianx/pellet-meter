@@ -39,7 +39,12 @@ ha proposal (perche'), spec (cosa deve fare), design (come) e task.
 | `firmware-bthome` | 14 di 19 | Acquisizione, pacchetto BTHome, ciclo di deep sleep |
 | `calibrazione-home-assistant` | 13 di 13 | Template di calibrazione, avvisi, grandezze derivate |
 | `schema-leggibile` | 8 di 10 | Disposizione dello schema nella GUI, lavoro da fare in KiCad |
-| `contenitore-3d` | 1 di 13 | Resta la conferma della CI |
+
+Archiviati, con le spec passate in `openspec/specs/`:
+
+| Change | Capability |
+|---|---|
+| `contenitore-3d` | `contenitore` — forma, aperture e vincoli meccanici dell'involucro |
 
 ```bash
 openspec list                 # stato dei change
