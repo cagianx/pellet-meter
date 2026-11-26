@@ -123,19 +123,43 @@ if ! compgen -G 'enclosure/*.scad' >/dev/null; then
 elif ! command -v openscad >/dev/null; then
   nota "openscad non trovato, render del contenitore saltato."
 else
-  for f in enclosure/*.scad; do
-    nome=$(basename "$f" .scad)
-    # --render forza la geometria esatta invece dell'anteprima rapida:
-    # l'anteprima mostra artefatti sulle intersezioni.
-    # --autocenter e --viewall inquadrano il pezzo: senza, la camera di
-    # default lo taglia o lo lascia lontano.
-    openscad --render \
-      --imgsize=1600,1200 \
-      --colorscheme=Tomorrow \
-      --autocenter --viewall \
-      -o "$OUT/$nome.png" "$f" >/dev/null 2>&1
-    echo "  $nome.png $(stat -c%s "$OUT/$nome.png") byte"
-  done
+  # Il render PNG di OpenSCAD ha bisogno di un contesto OpenGL, che in CI
+  # non c'e'. Senza display serve un server X virtuale.
+  if [ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
+    oscad=(openscad)
+  elif command -v xvfb-run >/dev/null; then
+    oscad=(xvfb-run -a openscad)
+  else
+    oscad=()
+  fi
+
+  if [ ${#oscad[@]} -eq 0 ]; then
+    nota "niente display e niente xvfb-run: render del contenitore saltato."
+  else
+    for f in enclosure/*.scad; do
+      nome=$(basename "$f" .scad)
+      # --render forza la geometria esatta invece dell'anteprima rapida:
+      # l'anteprima mostra artefatti sulle intersezioni.
+      # --autocenter e --viewall inquadrano il pezzo: senza, la camera di
+      # default lo taglia o lo lascia lontano.
+      "${oscad[@]}" --render \
+        --imgsize=1600,1200 \
+        --colorscheme=Tomorrow \
+        --autocenter --viewall \
+        -o "$OUT/$nome.png" "$f" >/dev/null
+
+      # OpenSCAD esce con codice 0 anche quando non riesce ad aprire il
+      # contesto OpenGL: stampa l'errore e scrive un PNG da zero byte.
+      # Fidarsi del codice di uscita vuol dire pubblicare un'immagine
+      # rotta con la CI verde — e' gia' successo.
+      if [ ! -s "$OUT/$nome.png" ]; then
+        echo "ERRORE: $nome.png e' vuoto. Il render e' fallito nonostante"
+        echo "        openscad sia uscito con successo."
+        exit 1
+      fi
+      echo "  $nome.png $(stat -c%s "$OUT/$nome.png") byte"
+    done
+  fi
 fi
 
 echo

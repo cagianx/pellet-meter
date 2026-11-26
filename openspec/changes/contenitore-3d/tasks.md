@@ -19,7 +19,7 @@
 - [x] 3.1 Render STL da riga di comando, con controllo che il file non sia vuoto
 - [x] 3.2 Controllo delle quote interne contro i parametri dichiarati
 - [x] 3.3 Verificare che il modello si rigeneri cambiando i parametri dei componenti
-- [ ] 3.4 Verificare che il job `contenitore` della CI diventi attivo e verde
+- [x] 3.4 Verificare che il job `contenitore` della CI diventi attivo e verde
 
 ## 4. Documentazione
 

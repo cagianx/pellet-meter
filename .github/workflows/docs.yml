@@ -46,13 +46,16 @@ jobs:
 
       - name: Strumenti di contorno
         # librsvg per il PNG, ImageMagick per il ritaglio. Openscad solo se
-        # il contenitore esiste: e' un pacchetto grosso e oggi non serve.
+        # il contenitore esiste: e' un pacchetto grosso e serve solo allora.
+        # Con openscad serve anche xvfb: il render PNG vuole un contesto
+        # OpenGL, e senza display OpenSCAD scrive un file da zero byte
+        # uscendo con successo.
         run: |
           apt-get update -qq
           apt-get install -y --no-install-recommends \
             librsvg2-bin imagemagick python3
           if compgen -G 'enclosure/*.scad' > /dev/null; then
-            apt-get install -y --no-install-recommends openscad
+            apt-get install -y --no-install-recommends openscad xvfb
           fi
 
       - name: Render
@@ -102,6 +105,27 @@ jobs:
         # e soggetti a rate limit, farebbero fallire la CI per motivi che
         # non dipendono da noi.
         run: npx docmd validate --strict
+
+      - name: Le immagini referenziate devono esistere davvero
+        working-directory: docs
+        # Una pagina che cita un'immagine mancante si costruisce senza
+        # errori: il buco si vede solo aprendo il sito. E' gia' successo
+        # con un PNG da zero byte, con la CI verde.
+        run: |
+          mancanti=0
+          # Il sito e il README: il README punta agli stessi file via URL
+          # di Pages, quindi un'immagine che serve solo a lui sparirebbe
+          # senza che nessun controllo se ne accorga.
+          riferimenti=$(grep -rhoE 'assets/render/[A-Za-z0-9_.-]+' site ../README.md | sort -u)
+          for f in $riferimenti; do
+            if [ -s "site/$f" ]; then
+              echo "ok      $f ($(stat -c%s "site/$f") byte)"
+            else
+              echo "MANCA   $f"
+              mancanti=1
+            fi
+          done
+          exit $mancanti
 
       - name: Il sito non deve essere vuoto
         working-directory: docs

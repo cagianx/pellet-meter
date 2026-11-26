@@ -62,12 +62,48 @@ formato dipendono dalla versione.
 | ERC | `--severity-error --severity-warning --exit-code-violations` |
 | Netlist | esporta e verifica le reti attese |
 | Export | PDF, SVG e distinta componenti |
-| Contenitore | render STL — si salta da solo se non ci sono file `.scad` |
+| Contenitore | render STL, piu' `check_case.py` sulle quote |
 
 L'ERC fallisce **anche sui warning**. E' sostenibile perche' lo schema e' a
 zero violazioni: qualunque regressione si vede subito, invece di accumularsi
 sotto la soglia dell'attenzione.
 
-Per gli STL il controllo non si ferma al codice di uscita di OpenSCAD, che
-non segnala tutti i problemi: verifica anche che il file esista e non sia
-vuoto.
+## OpenSCAD esce con successo anche quando fallisce
+
+Questa e' costata un'immagine rotta pubblicata con la CI verde, e vale la
+pena saperla prima di rifare lo stesso errore.
+
+Il render **PNG** di OpenSCAD ha bisogno di un contesto OpenGL. In CI non
+c'e' un display, quindi non riesce ad aprirlo. Quello che fa in quel caso
+non e' fallire:
+
+```
+Unable to open a connection to the X server.
+Can't create OpenGL OffscreenView. Code: -1.
+$ echo $?
+0
+```
+
+Scrive un **PNG da zero byte** ed esce con **codice 0**. Il job resta verde,
+l'artefatto viene caricato, e il buco si vede solo aprendo il sito.
+
+Due accorgimenti, perche' uno solo non basta:
+
+- in CI il render gira sotto **`xvfb-run`**, che fornisce il display mancante
+- `tools/render.sh` controlla comunque che ogni PNG **non sia vuoto** e
+  fallisce se lo e'
+
+Lo stesso vale per gli STL, per cui il controllo "il file esiste e non e'
+vuoto" c'era gia': il codice di uscita di OpenSCAD non e' una fonte
+affidabile di verita'.
+
+## Le immagini referenziate devono esistere
+
+Una pagina che cita un'immagine mancante si costruisce **senza errori**:
+docmd non se ne lamenta. Per questo il workflow `docs` raccoglie tutti i
+riferimenti ad `assets/render/` nel sito generato **e nel README**, e
+controlla che ogni file esista e non sia vuoto.
+
+Il README e' incluso apposta: punta agli stessi file tramite l'URL di
+GitHub Pages, quindi un'immagine che serve solo a lui sparirebbe senza che
+nessun controllo sul sito se ne accorga.
