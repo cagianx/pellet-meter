@@ -12,6 +12,8 @@ description: "A che punto e' il progetto e dove sono tracciati i lavori."
 | Schema elettrico | ERC a 0 violazioni, 7 reti verificate nodo per nodo |
 | Librerie di progetto | Simbolo e footprint XIAO, simbolo breakout VL53L1X |
 | CI hardware | Verde, nel container KiCad 10.0.8 |
+| Scheletro del firmware | Progetto ESP-IDF che compila per esp32c6, switch RF dell'antenna |
+| CI firmware | Verde, nel container `espressif/idf:v5.5` |
 | Documentazione | Questo sito |
 
 ## Cosa fornisce questo progetto
