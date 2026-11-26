@@ -119,7 +119,15 @@ di passaggio.
    di documentazione, non solo nei messaggi di commit o in una conversazione.
    Se una cosa e' stata capita e non e' scritta in `docs/`, e' persa.
 
-2. **Le modifiche passano per OpenSpec.** Prima si propone un change in
+2. **Tutto cio' che e' obsoleto o superfluo va eliminato.** Script che hanno
+   esaurito il loro compito, file generati, documentazione che descrive uno
+   stato passato, dipendenze non piu' usate, change archiviabili. Un repo che
+   accumula roba morta costringe chi arriva dopo a capire ogni volta cosa e'
+   ancora vero: e' la stessa fatica, pagata da tutti, per sempre.
+   **Prima di cancellare**, verificare che il know-how dentro quella cosa sia
+   gia' conservato in `docs/`: si elimina l'artefatto, non la conoscenza.
+
+3. **Le modifiche passano per OpenSpec.** Prima si propone un change in
    `openspec/changes/<nome>/` con proposal, spec, design e task; poi si
    implementa; poi si archivia aggiornando le spec in `openspec/specs/`.
    Non si inizia a modificare il progetto senza un change che dica cosa si sta
@@ -135,7 +143,8 @@ di passaggio.
 - Non versionare le uscite generate: `kicad/out/`, `enclosure/out/`, i report
   `.rpt`, i `__pycache__`. Le produce la CI.
 - Documentazione e commenti in italiano.
-- Gli script in `kicad/tools/` hanno generato lo schema iniziale. Una volta
-  modificato lo schema nella GUI, **il `.kicad_sch` e' la fonte di verita'**:
-  non rieseguire i generatori sopra modifiche fatte a mano senza prima
-  guardare il diff.
+- **`kicad/pellet-meter.kicad_sch` e' l'unica fonte di verita' dello schema.**
+  Lo schema iniziale era stato generato via script; gli script sono stati
+  eliminati una volta esaurito il loro compito, perche' rieseguirli avrebbe
+  distrutto le modifiche fatte nella GUI. Quello che insegnavano sul formato
+  dei file KiCad e' conservato qui sotto e in `docs/`.

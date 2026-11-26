@@ -1,14 +1,14 @@
 {
-  "name": "docs",
+  "name": "pellet-meter-docs",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "docmd build",
+    "dev": "docmd dev",
+    "validate": "docmd validate --strict"
   },
-  "keywords": [],
   "type": "commonjs",
   "devDependencies": {
     "@docmd/core": "^0.10.1"
-  }
+  },
+  "private": true
 }
