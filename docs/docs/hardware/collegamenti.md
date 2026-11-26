@@ -11,7 +11,10 @@ description: "Piedinatura, reti e le insidie del montaggio."
 |---|---|
 | `VBAT` | LiPo +, pad VBAT dello XIAO, R1 |
 | `BAT_SENSE` | R1 / R2 / C1 → **D0** (GPIO0, ingresso ADC) |
-| `VSENS` | **D2** (GPIO2) → VIN del breakout, C2, C3 |
+| `SENS_CTRL` | **D2** (GPIO2) → gate di Q1, R3, JP1 pad 1 |
+| `SW_OUT` | drain di Q1 → JP1 pad 3 |
+| `VSENS` | JP1 pad 2 → VIN del breakout, C2, C3 |
+| `3V3_OUT` | pin 12 dello XIAO → source di Q1, R3 |
 | `SDA` | **D4** (GPIO22) → SDA del breakout |
 | `SCL` | **D5** (GPIO23) → SCL del breakout |
 | `XSHUT` | **D3** (GPIO21) → XSHUT del breakout |
@@ -21,6 +24,20 @@ description: "Piedinatura, reti e le insidie del montaggio."
 commutata non serve, ma il pin resta disponibile.
 
 Lo schema con tutte le note e' in [Schema elettrico](/hardware/schema/).
+
+### D2 non alimenta piu' il sensore direttamente: dipende da JP1
+
+Fra `SENS_CTRL` (quello che D2 comanda) e `VSENS` (quello che alimenta il
+sensore) c'e' il ponticello **JP1**, a tre piazzole.
+
+| Ponticello | Q1, R3 | Percorso | D2 per accendere |
+|---|---|---|---|
+| **1-2** (default) | non montati | D2 → VIN | **alto** |
+| **2-3** | montati | 3V3_OUT → Q1 → VIN | **basso** |
+
+Su millefori il ponticello non c'e': si collega D2 al VIN del breakout e
+si e' nella configurazione 1-2. Il dettaglio sta in
+[Circuito stampato](/hardware/pcb/).
 
 ## Insidie
 

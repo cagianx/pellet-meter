@@ -89,6 +89,58 @@ jobs:
           path: kicad/out/
           if-no-files-found: error
 
+  pcb:
+    name: PCB — DRC e corrispondenza con lo schema
+    runs-on: ubuntu-latest
+    container:
+      image: kicad/kicad:10.0.8-full
+      options: --user root
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: C'e' un PCB?
+        id: sorgenti
+        run: |
+          if find kicad -maxdepth 1 -name '*.kicad_pcb' | grep -q .; then
+            echo "presente=si" >> "$GITHUB_OUTPUT"
+          else
+            echo "presente=no" >> "$GITHUB_OUTPUT"
+            echo "Nessun .kicad_pcb: salto."
+          fi
+
+      - name: DRC e parita' con lo schema
+        if: steps.sorgenti.outputs.presente == 'si'
+        working-directory: kicad
+        # Stessa severita' dell'ERC: --severity-warning, perche' un
+        # controllo che passa con i warning non protegge niente.
+        #
+        # --schematic-parity e' la meta' che conta davvero. Il DRC da solo
+        # dice che il layout e' valido, non che e' il layout di QUESTO
+        # schema: una rete rimasta indietro supera il DRC senza una parola.
+        run: |
+          mkdir -p out
+          kicad-cli pcb drc \
+            --severity-error --severity-warning \
+            --schematic-parity --exit-code-violations \
+            -o out/drc.rpt pellet-meter.kicad_pcb
+
+      - name: Rapporto DRC
+        if: always() && steps.sorgenti.outputs.presente == 'si'
+        working-directory: kicad
+        run: cat out/drc.rpt || echo "nessun rapporto prodotto"
+
+      - uses: actions/upload-artifact@v4
+        if: steps.sorgenti.outputs.presente == 'si'
+        with:
+          name: pcb
+          path: kicad/out/
+          if-no-files-found: error
+
   contenitore:
     name: Contenitore — render STL
     runs-on: ubuntu-latest

@@ -42,6 +42,53 @@ Il prezzo da pagare per 1 MΩ e' l'impedenza alta (500 kΩ equivalenti), che
 l'ADC fatica a campionare: per questo c'e' **C1 da 100 nF** sul nodo. A 4,2 V
 il nodo sta a 2,1 V, dentro il range dell'ADC con attenuazione a 12 dB.
 
+### PCB rimandato: decisione ribaltata
+
+**Com'era.** Il circuito stampato era deliberatamente rimandato, e la ragione
+era precisa: il rame **congela** scelte che il prototipo puo' ancora
+ribaltare. La piu' concreta era proprio l'alimentazione del sensore, qui
+sotto. Disegnare una scheda prima delle misure sul banco significa decidere
+al posto delle misure.
+
+**Cosa e' cambiato.** Il motivo del rinvio e' stato neutralizzato, non
+ignorato: il PCB prevede **tutte e due** le configurazioni — interruttore a
+P-MOSFET e pilotaggio diretto da GPIO — selezionabili con un ponticello a
+saldare. Il rame non decide piu' al posto delle misure, quindi il motivo per
+rimandare non c'e' piu'.
+
+Il prezzo di questa scelta e' esplicito e si paga altrove: il MOSFET Q1, il
+suo pull-up R3 e il ponticello JP1 occupano spazio e compaiono nella
+distinta anche quando non si montano. E' poco, rispetto a rifare la scheda
+quando le misure arrivano.
+
+Dettagli in [Circuito stampato](/hardware/pcb/).
+
+### Modulo innestato, non saldato a filo
+
+Sul PCB lo XIAO sta su **header femmina**, con il footprint DIP a fori
+passanti. L'alternativa erano le piazzole castellate, saldate a filo della
+scheda.
+
+Le castellate vincono sull'altezza: il modulo appoggerebbe a circa 1 mm dal
+rame invece degli 8,5 mm che impone un header. Su un contenitore alto
+10,8 mm non e' poco, ed e' la ragione per cui oggi la scheda **non entra**
+nel contenitore: eccede di 8,2 mm in altezza.
+
+Vince comunque il DIP, per due ragioni che pesano di piu':
+
+- **il modulo e' il componente piu' caro della distinta**, e innestato si
+  recupera. Se si brucia, se si vuole provare un altro XIAO, se il progetto
+  cambia, si sfila. Saldato a filo e' definitivo;
+- **le castellate si saldano a mano molto peggio**: quattordici piazzole sul
+  bordo, e chi costruisce non e' detto che faccia elettronica tutti i
+  giorni. Un progetto che si puo' montare male e' un progetto che resta nel
+  cassetto.
+
+**Il criterio per cambiare idea**: se l'altezza totale diventa il vincolo —
+tipicamente perche' sotto il coperchio della tramoggia non c'e' abbastanza
+spazio — si passa alle castellate, accettando che il modulo diventi parte
+della scheda. Finche' quel numero non c'e', a cedere e' il contenitore.
+
 ### Alimentazione del sensore: GPIO diretto, con un criterio per cambiare idea
 
 Il VL53L1X e' alimentato **direttamente dal GPIO D2**, senza MOSFET. La scelta
@@ -64,6 +111,12 @@ sensore non si avvia, si passa a un interruttore high-side con **P-MOSFET
 DMG2301L** (SOT-23), source a 3V3_OUT, drain a VSENS, gate a D2 con 100 kΩ di
 pull-up verso 3V3_OUT. **Attenzione: con il MOSFET la logica si inverte**,
 D2 basso significa sensore acceso.
+
+Da quando esiste il PCB, cambiare idea non vuole piu' dire rifare la
+scheda: **tutte e due le configurazioni sono sul rame** e si scelgono con
+il ponticello JP1. Il default resta il pilotaggio diretto, con Q1 e R3
+marcati DNP. Su millefori non cambia niente: il ponticello non c'e' e si
+collega D2 direttamente al VIN del breakout, come sempre.
 
 Nel frattempo **C2 (10 µF)** e **C3 (100 nF)** sulla rete VSENS servono a
 sostenere i picchi di corrente del VCSEL.

@@ -144,16 +144,66 @@ fi
 
 echo "== PCB"
 if ! compgen -G 'kicad/*.kicad_pcb' >/dev/null; then
-  assente "nessun .kicad_pcb: il prototipo e' su millefori, il PCB e' rimandato."
+  assente "nessun .kicad_pcb: il PCB non e' ancora stato disegnato."
 elif ! command -v kicad-cli >/dev/null; then
   nota "kicad-cli non trovato, render del PCB saltato."
 else
-  for lato in top bottom; do
-    kicad-cli pcb render \
-      --side "$lato" --background opaque --quality high \
-      -o "$OUT/pcb-$lato.png" kicad/*.kicad_pcb >/dev/null
-    echo "  pcb-$lato.png $(stat -c%s "$OUT/pcb-$lato.png") byte"
-  done
+  pcb=$(echo kicad/*.kicad_pcb)
+
+  # vista_pcb <nome> <argomenti di kicad-cli pcb render>
+  #
+  # Le quattro inquadrature mostrano cose diverse. Una in piu' costa un
+  # render intero e, se non aggiunge niente, costringe solo a guardare due
+  # volte la stessa scheda.
+  #
+  #   sopra    la disposizione: modulo, partitore, ponticello, foro ottico
+  #   sotto    il rame del lato B e le piazzole passanti
+  #   tre quarti  l'assieme con l'altezza del modulo innestato
+  #   di lato  quanto e' alto l'assieme, che e' il vincolo del contenitore
+  vista_pcb() {
+    local nome=$1
+    shift
+    kicad-cli pcb render --background opaque --quality high \
+      "$@" -o "$OUT/$nome.png" "$pcb" >/dev/null
+
+    if [ ! -s "$OUT/$nome.png" ]; then
+      echo "ERRORE: $nome.png e' vuoto."
+      exit 1
+    fi
+    # Stesso controllo del contenitore: un'immagine di solo sfondo pesa
+    # comunque qualche kilobyte, e la dimensione non la vede.
+    if colori=$(im_identify -format "%k" "$OUT/$nome.png" 2>/dev/null); then
+      if [ "$colori" -le 8 ]; then
+        echo "ERRORE: $nome.png ha $colori colore(i): la scena e' vuota."
+        exit 1
+      fi
+    else
+      colori="?"
+    fi
+    echo "  $nome.png $(stat -c%s "$OUT/$nome.png") byte, $colori colori"
+  }
+
+  vista_pcb pcb-top        --side top
+  vista_pcb pcb-bottom     --side bottom
+  vista_pcb pcb-3d         --rotate '-35,0,30' --perspective --floor
+  vista_pcb pcb-lato       --side front --zoom 1.3
+
+  # Il modello a colori, per chi lo vuole aprire in un programma 3D. I
+  # componenti marcati DNP restano fuori: la configurazione di default e'
+  # senza MOSFET, e un modello che lo mostra montato racconta una scheda
+  # diversa da quella che si costruisce.
+  kicad-cli pcb export glb --no-dnp --force \
+    -o "$OUT/pcb.glb" "$pcb" >/dev/null
+  echo "  pcb.glb $(stat -c%s "$OUT/pcb.glb") byte"
+
+  # L'STL che il visualizzatore del sito carica. kicad-cli lo scrive in
+  # ASCII e il visualizzatore vuole il binario, che pesa un quinto: la
+  # conversione e' in tools/stl_bin.py.
+  kicad-cli pcb export stl --no-dnp --force \
+    -o "$OUT/pcb-ascii.stl" "$pcb" >/dev/null
+  python3 tools/stl_bin.py "$OUT/pcb-ascii.stl" "$OUT/pcb.stl"
+  rm -f "$OUT/pcb-ascii.stl"
+  echo "  pcb.stl $(stat -c%s "$OUT/pcb.stl") byte"
 fi
 
 # --- Contenitore -----------------------------------------------------------

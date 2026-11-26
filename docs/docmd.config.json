@@ -67,6 +67,11 @@
           "icon": "file-text"
         },
         {
+          "title": "Circuito stampato",
+          "path": "/hardware/pcb/",
+          "icon": "circuit-board"
+        },
+        {
           "title": "Contenitore 3D",
           "path": "/hardware/contenitore/",
           "icon": "box"

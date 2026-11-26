@@ -45,10 +45,13 @@ niente, e non c'e' modo di accorgersene guardando solo i successi.
 | `GND` | 9 |
 | `BAT_SENSE` | 4 |
 | `VSENS` | 4 |
+| `SENS_CTRL` | 4 |
 | `VBAT` | 3 |
-| `SDA`, `SCL`, `XSHUT` | 2 ciascuna |
+| `3V3_OUT` | 3 |
+| `SDA`, `SCL`, `XSHUT`, `SW_OUT` | 2 ciascuna |
 
-Piu' 16 pin deliberatamente scollegati. Qualunque scostamento fa fallire la CI.
+Dieci reti in tutto, piu' 15 pin deliberatamente scollegati. Qualunque
+scostamento fa fallire la CI.
 
 ## Cosa fa la CI
 
@@ -62,7 +65,21 @@ formato dipendono dalla versione.
 | ERC | `--severity-error --severity-warning --exit-code-violations` |
 | Netlist | esporta e verifica le reti attese |
 | Export | PDF, SVG e distinta componenti |
+| PCB | `drc --severity-error --severity-warning --schematic-parity --exit-code-violations` |
 | Contenitore | render STL, piu' `check_case.py` su quote, area di incollaggio, componenti connesse e chiusura |
+
+Il passo del PCB ha la stessa severita' dell'ERC, e `--schematic-parity` e'
+la meta' che conta: il DRC da solo dice che il layout e' valido, non che e'
+il layout di **questo** schema. Una rete rimasta indietro supera il DRC
+senza una parola.
+
+Resta fuori dalla CI, per ora, la verifica di accoppiamento fra scheda e
+contenitore (`tools/check_fit.py`): oggi direbbe di no, perche' il
+contenitore e' dimensionato sulla millefori e la scheda col modulo
+innestato e' 8,2 mm piu' alta della cavita'. Metterla in pipeline adesso
+vorrebbe dire lasciare la CI rossa. Va attivata insieme all'aggiornamento
+delle quote del contenitore. Il dettaglio e' in
+[Circuito stampato](/hardware/pcb/).
 
 L'ERC fallisce **anche sui warning**. E' sostenibile perche' lo schema e' a
 zero violazioni: qualunque regressione si vede subito, invece di accumularsi

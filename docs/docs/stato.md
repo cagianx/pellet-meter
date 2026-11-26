@@ -9,13 +9,15 @@ description: "A che punto e' il progetto e dove sono tracciati i lavori."
 
 | | |
 |---|---|
-| Schema elettrico | ERC a 0 violazioni, 7 reti verificate nodo per nodo |
-| Librerie di progetto | Simbolo e footprint XIAO, simbolo breakout VL53L1X |
+| Schema elettrico | ERC a 0 violazioni, 10 reti verificate nodo per nodo |
+| Librerie di progetto | Simbolo e footprint XIAO, simbolo breakout VL53L1X, simbolo DMG2301L, solido sostitutivo del modulo |
+| Circuito stampato | Due strati, 50 x 34 mm, DRC e parita' con lo schema a 0 violazioni |
 | CI hardware | Verde, nel container KiCad 10.0.8 |
 | Scheletro del firmware | Progetto ESP-IDF che compila per esp32c6, switch RF dell'antenna |
 | CI firmware | Verde, nel container `espressif/idf:v5.5` |
 | Contenitore | Modello OpenSCAD parametrico, quote verificate contro il solido; tappo USB-C legato al corpo, faccia di incollaggio dimensionata sul peso, coperchio trattenuto a scatto |
-| Render | Schema nel sito e nel README; contenitore in quattro viste piu' una quotata e un modello ruotabile. Li produce la CI |
+| PCB | Layout a 2 strati, sbrogliato, DRC a 0 con parita' verificata contro lo schema |
+| Render | Schema nel sito e nel README; contenitore e PCB in piu' viste, con quote e due modelli ruotabili. Li produce la CI |
 | Documentazione | Questo sito |
 
 ## Cosa fornisce questo progetto
@@ -36,7 +38,7 @@ ha proposal (perche'), spec (cosa deve fare), design (come) e task.
 
 | Change | Task aperti | Contenuto |
 |---|---|---|
-| `pcb-kicad` | 16 di 20 | Layout del PCB, verifica di accoppiamento con il contenitore, render della scheda |
+| `pcb-kicad` | 1 di 20 | Resta l'attivazione in CI della verifica di accoppiamento, che oggi direbbe di no |
 | `firmware-bthome` | 14 di 19 | Acquisizione, pacchetto BTHome, ciclo di deep sleep |
 | `calibrazione-home-assistant` | 13 di 13 | Template di calibrazione, avvisi, grandezze derivate |
 | `contenitore-montaggio` | 0 di 11, pronto da archiviare | Tappo USB-C, superficie di incollaggio, chiusura a scatto |
@@ -84,7 +86,4 @@ requisito che ricade su `calibrazione-home-assistant`.
 
 ## Idee rimandate
 
-- **PCB** in KiCad al posto della millefori, da produrre con Aisler o
-  JLCPCB. Deliberatamente rimandato: il PCB congela in rame scelte che il
-  prototipo puo' ancora ribaltare.
 - **Cifratura BTHome** con bindkey.

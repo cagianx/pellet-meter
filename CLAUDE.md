@@ -13,15 +13,18 @@ Hardware: **Seeed XIAO ESP32C6** + **VL53L1X** (ToF, I²C) + LiPo 1000 mAh.
 ```
 kicad/              progetto KiCad 10
   pellet-meter.kicad_sch    schema elettrico (fonte di verita')
-  lib/                      simboli e footprint di progetto
+  pellet-meter.kicad_pcb    circuito stampato, 2 strati, 50 x 34 mm
+  lib/                      simboli, footprint e modelli 3D di progetto
   tools/check_netlist.py    verifica le reti nodo per nodo
-  out/                      PDF/SVG esportati — generati, non versionati
+  out/                      PDF/SVG/rapporti esportati — generati, non versionati
 enclosure/          contenitore parametrico OpenSCAD
   case.scad                 il pezzo: unica fonte di verita' della geometria
   lib/quote.scad            moduli di quotatura usati dai render quotati
   viste/                    viste derivate, pubblicate dal sito
 firmware/           progetto ESP-IDF (C17, target esp32c6)
-tools/              render.sh (immagini), check_case.py (quote del contenitore)
+tools/              render.sh (immagini), check_case.py (quote del contenitore),
+                    check_fit.py (la scheda entra nel contenitore?),
+                    stl_bin.py (STL ASCII -> binario per il sito)
 docs/               sito di documentazione (docmd) pubblicato su GitHub Pages
 ```
 
@@ -44,6 +47,14 @@ kicad-cli sch export pdf --black-and-white -o out/pellet-meter-schema.pdf pellet
 # STL del contenitore — dalla cartella enclosure/
 openscad -o out/case.stl case.scad
 
+# DRC del PCB e corrispondenza con lo schema — dalla radice del repo
+kicad-cli pcb drc --severity-error --severity-warning \
+  --schematic-parity --exit-code-violations \
+  -o /tmp/drc.rpt kicad/pellet-meter.kicad_pcb
+
+# la scheda entra nel contenitore? — dalla radice del repo
+python3 tools/check_fit.py
+
 # immagini per il sito e il README — dalla radice del repo
 ./tools/render.sh
 
@@ -53,22 +64,31 @@ idf.py build
 podman run --rm -v "$PWD":/p:Z -w /p docker.io/espressif/idf:v5.5 idf.py build
 ```
 
-Le reti attese sono 7: `GND` (9 nodi), `BAT_SENSE` (4), `VSENS` (4),
-`VBAT` (3), `SDA` (2), `SCL` (2), `XSHUT` (2). Tutto il resto deve risultare
-come rete a nodo singolo, e corrisponde ai pin marcati esplicitamente come
-non collegati.
+Le reti attese sono 10: `GND` (9 nodi), `BAT_SENSE` (4), `VSENS` (4),
+`SENS_CTRL` (4), `VBAT` (3), `3V3_OUT` (3), `SDA` (2), `SCL` (2),
+`XSHUT` (2), `SW_OUT` (2). Tutto il resto deve risultare come rete a nodo
+singolo, e corrisponde ai pin marcati esplicitamente come non collegati
+(15 pin).
 
 ## Scelte di progetto da non ribaltare per distrazione
 
 - **La calibrazione sta in Home Assistant, non nel firmware.** Il firmware
   trasmette la distanza grezza in mm; ricalibrare non deve richiedere un
   reflash.
-- **Il sensore e' alimentato direttamente dal GPIO D2**, senza MOSFET. E' una
-  decisione presa consapevolmente: un SOT-23 su millefori richiederebbe un
-  adattatore, e il prototipo serve proprio a misurare se il problema esiste.
-  L'upgrade a P-MOSFET high-side e' annotato sullo schema, da fare solo se le
-  misure mostrano cali di tensione. **Con il MOSFET la logica si inverte**:
-  D2 basso = sensore acceso.
+- **Il sensore e' alimentato direttamente dal GPIO D2**, senza MOSFET: e' la
+  configurazione di default, quella gia' verificata sul prototipo. Sul PCB
+  c'e' **anche** l'interruttore high-side a P-MOSFET (Q1 + R3, marcati DNP),
+  e si sceglie col ponticello a tre piazzole JP1: 1-2 diretto, 2-3 MOSFET.
+  Si passa al MOSFET solo se le misure mostrano cali di tensione.
+  **Con il MOSFET la logica si inverte**: D2 basso = sensore acceso, e la
+  configurazione va dichiarata anche nel firmware a compile time.
+
+- **Il PCB non entra nel contenitore attuale**, e si sa di quanto: eccede di
+  8,2 mm in altezza, perche' il modulo e' innestato su header femmina alti
+  8,5 mm mentre il contenitore e' dimensionato sulla millefori. Lo dice
+  `tools/check_fit.py`. A cedere e' il parametro `scheda` del contenitore,
+  non il PCB — a meno che lo spazio sotto il coperchio della tramoggia non
+  si riveli il vincolo, e allora si passa alle piazzole castellate.
 - **Il partitore della batteria e' 2×1 MΩ**, non 100 kΩ. A 4,2 V sono ~2,1 µA
   contro ~21 µA, e con 100 kΩ si raddoppierebbe il consumo in deep sleep.
   L'impedenza alta (500 kΩ) e' la ragione del C1 da 100 nF.
@@ -189,8 +209,9 @@ l'unico punto di passaggio.
 - Non versionare le uscite generate: `kicad/out/`, `enclosure/out/`, i report
   `.rpt`, i `__pycache__`. Le produce la CI.
 - Documentazione e commenti in italiano.
-- **`kicad/pellet-meter.kicad_sch` e' l'unica fonte di verita' dello schema.**
-  Lo schema iniziale era stato generato via script; gli script sono stati
-  eliminati una volta esaurito il loro compito, perche' rieseguirli avrebbe
-  distrutto le modifiche fatte nella GUI. Quello che insegnavano sul formato
-  dei file KiCad e' conservato qui sotto e in `docs/`.
+- **`kicad/pellet-meter.kicad_sch` e `kicad/pellet-meter.kicad_pcb` sono
+  l'unica fonte di verita' di schema e scheda.** Entrambi erano stati
+  generati via script; gli script sono stati eliminati una volta esaurito il
+  loro compito, perche' rieseguirli avrebbe distrutto le modifiche fatte
+  nella GUI. Quello che insegnavano sul formato dei file KiCad e' conservato
+  qui sotto e in `docs/know-how/kicad/`.

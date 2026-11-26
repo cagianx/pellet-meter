@@ -71,10 +71,16 @@ Su PCB la scelta si riapre, e non e' scontata.
   montare il MOSFET e dimenticarsene.
 
 - **I modelli 3D mancanti si sostituiscono dichiarandolo, non si
-  ignorano.** Per lo XIAO si usa il modello di un altro della famiglia:
-  condividono i 21 x 17,5 mm, quindi come solido per la verifica di
-  accoppiamento e' fedele, e la differenza e' la serigrafia. Per il
-  breakout VL53L1X, che oggi e' solo un header a 6 pin, il corpo si
+  ignorano.** Per lo XIAO l'idea era usare il modello di un altro della
+  famiglia, che condivide i 21 x 17,5 mm. **Non era praticabile**: i
+  cinque STEP che il footprint cita stanno sotto `${AMZPATH}`, una
+  libreria di terze parti che non e' installata qui ne' nell'immagine
+  KiCad della CI. Si e' quindi modellato un solido semplice — tre
+  parallelepipedi in VRML — che comprende anche l'header femmina, perche'
+  e' l'header a decidere l'altezza dell'assieme. Formato VRML e non STL
+  perche' `kicad-cli pcb render` ignora gli STL senza avvisare.
+
+  Per il breakout VL53L1X, che oggi e' solo un header a 6 pin, il corpo si
   aggiunge **dal lato OpenSCAD** come parallelepipedo parametrico: evita
   di dover produrre un file STEP a mano, e tiene l'ingombro dove stanno
   gia' gli altri parametri del contenitore.

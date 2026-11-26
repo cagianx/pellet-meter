@@ -20,6 +20,27 @@ description: "Lista della spesa, dove comprare, e cosa evitare."
 
 Spesa stimata su Amazon con kit assortito e breadboard: **60–85 €**.
 
+### Solo se si fa produrre il PCB
+
+| Q.tà | Componente | Note |
+|---|---|---|
+| 2 | Header femmina 2,54 mm, 7 vie | Il modulo si innesta, cosi' si recupera |
+| 1 | Header maschio 2,54 mm, 6 vie | Per il breakout del sensore |
+| 1 | Header maschio 2,54 mm, 2 vie | BT1, attacco della batteria |
+
+### Solo per la configurazione a MOSFET
+
+Non si montano se non servono: il default e' il pilotaggio diretto. Sono
+marcati **DNP** sullo schema.
+
+| Q.tà | Componente | Note |
+|---|---|---|
+| 1 | P-MOSFET DMG2301L, SOT-23 | Q1, interruttore high-side del sensore |
+| 1 | Resistenza 100 kΩ | R3, pull-up di gate |
+
+Montandoli **si inverte la logica di D2**: vedi
+[Circuito stampato](/hardware/pcb/).
+
 La distinta aggiornata viene generata dalla CI a partire dallo schema, come
 artefatto `schema` (file `pellet-meter-bom.csv`).
 

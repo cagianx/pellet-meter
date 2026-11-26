@@ -89,8 +89,13 @@ nessun avviso, solo un componente scollegato che si scopre al momento di
 saldare.
 :::
 
-Nel dubbio, si puo' usare il simbolo generico (`Q_PMOS_GSD`, con G=1 S=2 D=3)
-e mettere la sigla reale nel campo Valore.
+**Non esiste un `Device:Q_PMOS_GSD` di comodo.** In KiCad 10 la libreria
+`Device` ha solo `Q_PMOS`, e i suoi pin sono numerati `D`, `G`, `S`: lettere,
+non numeri, quindi non si abbinano a nessun footprint SOT-23. La via che
+funziona e' copiare nella libreria di progetto il simbolo **padre** di quello
+che serve — per `DMG2301L` e' `Transistor_FET:TP0610T`, con pin 1=G, 2=S,
+3=D — rinominarlo e aggiornarne Valore, Datasheet e Descrizione. Cosi' il
+simbolo e' autonomo e dentro lo schema non c'e' nessun `extends` da gestire.
 
 ## Le librerie si referenziano con variabili
 
@@ -109,3 +114,80 @@ Simbolo e footprint vengono dalla
 Nel repo c'e' solo il simbolo `XIAO-ESP32-C6-SMD` ma **esiste anche il
 footprint DIP** (`XIAO-ESP32-C6-DIP.kicad_mod`): il simbolo e' lo stesso, si
 abbina al footprint che serve.
+
+## Le `property private` dei simboli di sistema vanno copiate
+
+Portando un simbolo di sistema dentro i `lib_symbols` dello schema, viene la
+tentazione di togliere le `(property private "KLC_S5.1" ...)`: sono note di
+lint delle librerie ufficiali e non servono a niente qui dentro.
+
+Toglierle fa scattare `lib_symbol_mismatch`, che e' un **warning** e quindi
+fa fallire la CI, perche' KiCad confronta la copia dentro lo schema con
+quella della libreria e le `private` fanno parte del confronto. Si copiano
+verbatim.
+
+## `re.sub` interpreta gli escape anche nella stringa di sostituzione
+
+Non e' una trappola di KiCad ma la si incontra solo qui, e costa un
+pomeriggio. Le note di testo dello schema contengono `\n` come **escape
+letterale**, due caratteri. Riscriverne una con
+
+```python
+re.sub(r'\(text "[^"]*"', '(text "%s"' % nota, blocco)
+```
+
+inserisce ritorni a capo **veri** dentro una stringa quotata, perche' la
+stringa di sostituzione passa anch'essa per l'interprete degli escape. KiCad
+poi dice solo `Fallito caricamento schema`, senza riga ne' motivo. La
+sostituzione va fatta con una lambda:
+
+```python
+re.sub(r'\(text "[^"]*"', lambda _: '(text "%s"' % nota, blocco)
+```
+
+## Trappole del PCB
+
+### `FootprintLoad` non mette il nome della libreria
+
+Con `pcbnew.FootprintLoad(percorso, nome)` il footprint arriva col FPID
+senza prefisso di libreria. La parita' con lo schema confronta il FPID
+**completo**, quindi segnala `footprint_symbol_mismatch` su ogni componente.
+Si rimedia con `fp.SetFPIDAsString("Libreria:Nome")`.
+
+### Le reti del PCB si chiamano come quelle della netlist, barra compresa
+
+Nella netlist esportata le reti sono `/VBAT`, non `VBAT`, e i pin scollegati
+hanno reti vere con nomi tipo `unconnected-(U1-D1-Pad2)`. Creando sul PCB
+delle reti chiamate `VBAT`, la parita' segnala `net_conflict` su **ogni**
+piazzola; saltando le `unconnected-`, segnala che alla piazzola "manca il
+collegamento dato dallo schema". I nomi si prendono dalla netlist cosi' come
+sono.
+
+### `--schematic-parity` pretende una piazzola per ogni pin del simbolo
+
+Anche per i pin non collegati. Un simbolo che dichiara 24 pin e un footprint
+che ne ha 14 producono dieci segnalazioni `net_conflict` del tipo "Nessuna
+piazzola trovata per il pin 18". Non e' un capriccio: e' il modo in cui si
+accorge che footprint e simbolo descrivono due cose diverse. Per lo XIAO la
+soluzione e' stata aggiungere al footprint le dieci piazzole di servizio,
+vedi [Circuito stampato](/hardware/pcb/).
+
+### `attr smd` su un footprint con fori passanti
+
+Il footprint DIP dello XIAO arriva dalla libreria Seeed dichiarato
+`(attr smd)` pur avendo piazzole passanti. Il DRC lo chiama
+`footprint_type_mismatch` ed e' un **errore**. Va messo `(attr through_hole)`.
+
+### Il render ignora i modelli 3D in STL
+
+`kicad-cli pcb render` carica i `.wrl` e **salta i `.stl` senza dire
+niente**: il render esce con il componente mancante e il comando riesce. Il
+modello sostitutivo dello XIAO e' quindi in VRML.
+
+Attenzione all'unita': KiCad legge il VRML in unita' da **0,1 pollice**. Il
+modo di non impazzire e' avvolgere tutto in un
+`Transform { scale 0.39370079 ... }` e scrivere i numeri in millimetri.
+
+E `DEF` in VRML **definisce e disegna**: una forma definita al primo livello
+compare anche nell'origine, oltre che dove la si riusa con `USE`. Va messa
+gia' dentro la sua `Transform`.

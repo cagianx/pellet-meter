@@ -33,13 +33,19 @@ PDF e la distinta componenti resta un artefatto del workflow `hardware`
 
 | Rif | Valore | Note |
 |---|---|---|
-| U1 | XIAO-ESP32-C6 | Footprint DIP, per header su millefori |
+| U1 | XIAO-ESP32-C6 | Footprint DIP: header su millefori, header femmina sul PCB |
 | U2 | VL53L1X | Breakout su header a 6 pin |
 | BT1 | LiPo 3,7 V 1000 mAh | |
 | R1, R2 | 1 MΩ | Partitore della batteria |
 | C1 | 100 nF | Stabilizza il nodo ADC |
 | C2 | 10 µF | Bulk sull'alimentazione del sensore |
 | C3 | 100 nF | Disaccoppiamento del sensore |
+| Q1 | DMG2301L | Interruttore high-side del sensore. **DNP**: si monta solo nella configurazione a MOSFET |
+| R3 | 100 kΩ | Pull-up di gate di Q1. **DNP**, come Q1 |
+| JP1 | Ponticello a 3 piazzole | Sceglie l'alimentazione del sensore: 1-2 diretta, 2-3 a MOSFET |
+
+Q1, R3 e JP1 esistono perche' il PCB non deve congelare l'unica scelta
+hardware ancora aperta: vedi [Circuito stampato](/hardware/pcb/).
 
 ## Librerie di progetto
 
@@ -47,7 +53,14 @@ Il simbolo e il footprint dello XIAO ESP32C6 **non sono nelle librerie
 standard di KiCad**: vengono dalla
 [libreria OPL di Seeed](https://github.com/Seeed-Studio/OPL_Kicad_Library)
 e sono copiati in `kicad/lib/`. Viene usato il footprint **DIP** (fori
-passanti), non quello SMD castellato, perche' il montaggio e' su millefori.
+passanti), non quello SMD castellato: su millefori perche' non c'e'
+alternativa, sul PCB perche' il modulo innestato si recupera. Il footprint
+porta dieci piazzole in piu' rispetto all'originale, per i pin che lo XIAO
+espone sul proprio fondo.
+
+Il simbolo `DMG2301L` e' una copia rinominata di `Transistor_FET:TP0610T`:
+quello di sistema e' derivato con `extends`, e un simbolo autonomo evita di
+dover gestire l'ereditarieta' dentro lo schema.
 
 Il simbolo del breakout VL53L1X e' scritto a mano: nelle librerie standard
 c'e' solo il chip nudo (`VL53L1CXV0FY1`), che non corrisponde a una scheda
