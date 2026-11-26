@@ -1,0 +1,32 @@
+# Configurazione di partenza. Non e' sdkconfig: quello e' generato e non
+# versionato. Qui stanno solo le scelte deliberate, cosi' si vedono tutte in
+# venti righe invece di essere sepolte in un file da duemila.
+
+CONFIG_IDF_TARGET="esp32c6"
+
+# --- Console ---------------------------------------------------------------
+# Sullo XIAO ESP32C6 il connettore USB-C va alla USB Serial/JTAG nativa del
+# chip, non a un convertitore seriale: col default (UART) il monitor non
+# vede niente e sembra che il firmware non parta.
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+
+# --- BLE: solo advertising -------------------------------------------------
+# Il dispositivo trasmette e non accetta connessioni, quindi dei quattro
+# ruoli NimBLE serve solo broadcaster. Spegnere gli altri tre e' anche una
+# riduzione di superficie: niente codice di connessione da tenere in RAM.
+CONFIG_BT_ENABLED=y
+CONFIG_BT_NIMBLE_ENABLED=y
+CONFIG_BT_NIMBLE_ROLE_BROADCASTER=y
+CONFIG_BT_NIMBLE_ROLE_OBSERVER=n
+CONFIG_BT_NIMBLE_ROLE_CENTRAL=n
+CONFIG_BT_NIMBLE_ROLE_PERIPHERAL=n
+
+# --- Risveglio dal deep sleep ----------------------------------------------
+# Senza questo il bootloader riverifica l'immagine a ogni risveglio: e'
+# tempo di CPU sveglia speso 144 volte al giorno per controllare una flash
+# che nessuno ha toccato.
+CONFIG_BOOTLOADER_SKIP_VALIDATE_IN_DEEP_SLEEP=y
+
+# --- Dimensione e flash ----------------------------------------------------
+CONFIG_COMPILER_OPTIMIZATION_SIZE=y
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y

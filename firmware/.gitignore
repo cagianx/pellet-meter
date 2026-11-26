@@ -1,0 +1,12 @@
+# Uscite di ESP-IDF
+build/
+
+# sdkconfig e' generato da sdkconfig.defaults: versionarlo significa avere
+# due fonti di verita' per la configurazione, e quella generata vince in
+# silenzio.
+sdkconfig
+sdkconfig.old
+
+# Componenti scaricati dal registry
+managed_components/
+dependencies.lock

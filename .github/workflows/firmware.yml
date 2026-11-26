@@ -1,0 +1,64 @@
+name: firmware
+
+# Compila il firmware nell'immagine ufficiale ESP-IDF. E' l'unica verifica
+# automatica possibile senza il dispositivo in mano: che il progetto compili
+# per esp32c6 con la configurazione dichiarata in sdkconfig.defaults.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'firmware/**'
+      - '.github/workflows/firmware.yml'
+  pull_request:
+    paths:
+      - 'firmware/**'
+      - '.github/workflows/firmware.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build — esp32c6
+    runs-on: ubuntu-latest
+    container:
+      image: espressif/idf:v5.5
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build
+        shell: bash
+        working-directory: firmware
+        # L'ambiente IDF non e' attivo nella shell della CI: va sorgentato a
+        # mano, altrimenti idf.py non si trova.
+        run: |
+          . "$IDF_PATH/export.sh"
+          idf.py build
+
+      - name: Il binario non deve essere vuoto
+        shell: bash
+        working-directory: firmware
+        # idf.py esce con zero anche quando la configurazione finisce per
+        # ignorare simboli sconosciuti: il controllo sul binario prodotto
+        # dice che e' arrivato davvero in fondo.
+        run: |
+          test -s build/pellet-meter.bin
+          echo "dimensione: $(stat -c%s build/pellet-meter.bin) byte"
+
+      - name: Occupazione di flash e RAM
+        shell: bash
+        working-directory: firmware
+        run: |
+          . "$IDF_PATH/export.sh"
+          idf.py size
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: |
+            firmware/build/pellet-meter.bin
+            firmware/build/pellet-meter.elf
+          if-no-files-found: error

@@ -8,8 +8,8 @@
 
 ## 2. Struttura del firmware
 
-- [ ] 2.1 Progetto firmware che compila per XIAO ESP32C6, con istruzioni di build
-- [ ] 2.2 Impostazione dello switch RF dell'antenna al risveglio, prima di inizializzare il BLE
+- [~] 2.1 Progetto firmware che compila per XIAO ESP32C6, con istruzioni di build — scritto, in attesa che la CI confermi la compilazione (docker non disponibile in locale)
+- [x] 2.2 Impostazione dello switch RF dell'antenna al risveglio, prima di inizializzare il BLE
 - [ ] 2.3 Costruzione del pacchetto BTHome v2, oggetti in ordine crescente di ID
 - [ ] 2.4 Advertising per circa un secondo, poi ritorno al deep sleep
 

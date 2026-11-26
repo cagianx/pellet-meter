@@ -40,7 +40,20 @@ Lo XIAO ESP32C6 ha un selettore tra antenna integrata ed esterna, comandato
 da GPIO **interni** che non compaiono sui 14 pin del connettore — e quindi
 non compaiono nemmeno sullo schema.
 
-Vanno impostati **a ogni risveglio**, prima di inizializzare il BLE.
+| GPIO | Ruolo | Livello |
+|---|---|---|
+| `GPIO3` | Abilita il controllo dello switch | **basso** = attivo |
+| `GPIO14` | Scelta dell'antenna | basso = ceramica integrata, alto = connettore esterno |
+
+Noi usiamo l'antenna integrata, quindi entrambi bassi. `GPIO3` va messo
+basso **prima** di scegliere l'antenna.
+
+Vanno impostati **a ogni risveglio**, prima di inizializzare il BLE, e la
+ragione e' che nessuno dei due conserva lo stato: sull'ESP32-C6 solo
+`GPIO0`–`GPIO7` sono LP/RTC — `GPIO14` quindi non lo e' per costruzione — e
+anche `GPIO3`, che lo e', torna allo stato di default al risveglio se non si
+abilita esplicitamente l'**hold**. Senza riscriverli, lo switch resta a
+mezz'aria.
 Altrimenti l'advertising esce attenuato e il problema si manifesta come
 "Home Assistant a volte non lo vede", che e' il tipo di guasto che fa perdere
 un pomeriggio.

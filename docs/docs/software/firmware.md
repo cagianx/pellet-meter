@@ -61,6 +61,37 @@ dormire.
 - si **accorcia** solo se il rilevamento della ricarica perde eventi; non per
   avere un grafico piu' liscio, che e' il modo di spendere batteria per niente
 
+## Build e caricamento
+
+Il progetto sta in `firmware/`, e' un normale progetto ESP-IDF e il target e'
+gia' scritto in `sdkconfig.defaults`: non serve `idf.py set-target`.
+
+```bash
+# dalla cartella firmware/, con l'ambiente ESP-IDF 5.x attivo
+idf.py build
+idf.py -p /dev/ttyACM0 flash monitor
+```
+
+Senza ESP-IDF installato, la stessa cosa nell'immagine ufficiale:
+
+```bash
+docker run --rm -v "$PWD":/project -w /project espressif/idf:v5.5 \
+  idf.py build
+```
+
+:::note
+La porta e' `/dev/ttyACM0`, non `/dev/ttyUSB0`: sullo XIAO ESP32C6 l'USB-C va
+alla **USB Serial/JTAG nativa** del chip, non a un convertitore seriale. Per
+lo stesso motivo in `sdkconfig.defaults` c'e'
+`CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y`: col default (UART) il monitor non
+mostra niente e sembra che il firmware non parta.
+:::
+
+`sdkconfig` **non e' versionato**, perche' e' generato: la configurazione
+deliberata sta tutta in `sdkconfig.defaults`, una ventina di righe
+commentate. Il workflow CI `firmware` compila a ogni modifica e pubblica
+binario e occupazione di flash.
+
 ## Ciclo di funzionamento
 
 1. Risveglio dal timer RTC (uscita dal deep sleep).
