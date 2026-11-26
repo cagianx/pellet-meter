@@ -19,12 +19,18 @@ description: "A che punto e' il progetto e dove sono tracciati i lavori."
 Il lavoro e' tracciato con **OpenSpec**, in `openspec/changes/`. Ogni change
 ha proposal (perche'), spec (cosa deve fare), design (come) e task.
 
-| Change | Task | Contenuto |
-|---|---|---|
-| `contenitore-3d` | 12 | Misure, modello OpenSCAD parametrico, verifica STL |
-| `firmware-bthome` | 16 | Ciclo deep sleep, misura, pacchetto BTHome, consumi reali |
-| `calibrazione-home-assistant` | 10 | Template di calibrazione, avvisi, grandezze derivate |
-| `schema-leggibile` | 10 | Disposizione dello schema nella GUI, pubblicazione nel sito |
+I change sono elencati **in ordine di dipendenza**, non di importanza.
+
+| # | Change | Task | Contenuto |
+|---|---|---|---|
+| 1 | `prototipo-hardware` | 18 | Acquisto, breadboard, **prova sul pellet reale**, saldatura |
+| 2 | `firmware-bthome` | 16 | Ciclo deep sleep, misura, pacchetto BTHome, consumi reali |
+| 3 | `contenitore-3d` | 12 | Misure, modello OpenSCAD parametrico, verifica STL |
+| 4 | `calibrazione-home-assistant` | 10 | Template di calibrazione, avvisi, grandezze derivate |
+| — | `schema-leggibile` | 10 | Disposizione dello schema nella GUI, pubblicazione nel sito |
+
+`schema-leggibile` e' fuori ordine perche' non dipende da nulla: si puo'
+fare in qualsiasi momento.
 
 ```bash
 openspec list                 # stato dei change
@@ -32,15 +38,25 @@ openspec show <nome>          # un change nel dettaglio
 openspec validate --all
 ```
 
-## Il collo di bottiglia
+## Da dove si comincia
 
-**Misurare la tramoggia.** Distanza dal coperchio al pellet a serbatoio pieno
-e a serbatoio vuoto, e forma del fondo.
+Due cose bloccano tutto il resto, e vanno fatte sul posto con la stufa
+davanti.
 
-Senza quei numeri, il contenitore si disegna su quote da datasheet e la
-calibrazione di Home Assistant resta con valori segnaposto. E' il primo task
-sia di `contenitore-3d` sia di `calibrazione-home-assistant`, e non e' un
-caso.
+**1. La prova del sensore sul pellet reale** (`prototipo-hardware`, gruppo 3).
+E' la verifica che l'intero progetto sta in piedi: un ToF dentro una
+tramoggia deve vedersela con polvere, riflessi, coperchio chiuso e superficie
+a cono. Se il VL53L1X non regge, cambia il sensore — e con lui schema,
+firmware e contenitore. Per questo viene prima del firmware completo: basta
+uno sketch che stampi la distanza.
+
+**2. Misurare la tramoggia.** Distanza dal coperchio al pellet a serbatoio
+pieno e vuoto, e forma del fondo. Senza quei numeri il contenitore si disegna
+su quote da datasheet e la calibrazione resta con valori segnaposto. E' il
+primo task sia di `contenitore-3d` sia di `calibrazione-home-assistant`, e
+non e' un caso.
+
+Finche' queste due non sono fatte, tre change su cinque lavorano su ipotesi.
 
 ## Decisioni ancora aperte
 
