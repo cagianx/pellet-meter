@@ -31,10 +31,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # checkout superficiale: il plugin git di docmd e' disattivato, quindi
+      # la storia dei commit non serve al build
       - uses: actions/checkout@v5
-        with:
-          # il plugin git di docmd legge la storia dei commit per pagina
-          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:

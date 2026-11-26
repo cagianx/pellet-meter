@@ -22,7 +22,7 @@
     },
     "footer": {
       "style": "minimal",
-      "content": "pellet-meter — sensore livello pellet BLE/BTHome",
+      "content": "pellet-meter \u2014 sensore livello pellet BLE/BTHome",
       "branding": true
     }
   },
@@ -36,17 +36,41 @@
   "copyCode": true,
   "pageNavigation": true,
   "navigation": [
-    { "title": "Panoramica", "path": "/", "icon": "zap" },
-    { "title": "Decisioni di progetto", "path": "/decisioni/", "icon": "git-branch" },
+    {
+      "title": "Panoramica",
+      "path": "/",
+      "icon": "zap"
+    },
+    {
+      "title": "Decisioni di progetto",
+      "path": "/decisioni/",
+      "icon": "git-branch"
+    },
     {
       "title": "Hardware",
       "icon": "cpu",
       "collapsible": false,
       "children": [
-        { "title": "Componenti", "path": "/hardware/componenti/", "icon": "shopping-cart" },
-        { "title": "Collegamenti", "path": "/hardware/collegamenti/", "icon": "cable" },
-        { "title": "Schema elettrico", "path": "/hardware/schema/", "icon": "file-text" },
-        { "title": "Contenitore 3D", "path": "/hardware/contenitore/", "icon": "box" }
+        {
+          "title": "Componenti",
+          "path": "/hardware/componenti/",
+          "icon": "shopping-cart"
+        },
+        {
+          "title": "Collegamenti",
+          "path": "/hardware/collegamenti/",
+          "icon": "cable"
+        },
+        {
+          "title": "Schema elettrico",
+          "path": "/hardware/schema/",
+          "icon": "file-text"
+        },
+        {
+          "title": "Contenitore 3D",
+          "path": "/hardware/contenitore/",
+          "icon": "box"
+        }
       ]
     },
     {
@@ -54,9 +78,21 @@
       "icon": "code",
       "collapsible": false,
       "children": [
-        { "title": "Firmware", "path": "/software/firmware/", "icon": "microchip" },
-        { "title": "Pacchetto BTHome", "path": "/software/bthome/", "icon": "radio" },
-        { "title": "Home Assistant", "path": "/software/home-assistant/", "icon": "house" }
+        {
+          "title": "Firmware",
+          "path": "/software/firmware/",
+          "icon": "microchip"
+        },
+        {
+          "title": "Pacchetto BTHome",
+          "path": "/software/bthome/",
+          "icon": "radio"
+        },
+        {
+          "title": "Home Assistant",
+          "path": "/software/home-assistant/",
+          "icon": "house"
+        }
       ]
     },
     {
@@ -64,17 +100,39 @@
       "icon": "lightbulb",
       "collapsible": false,
       "children": [
-        { "title": "Trappole di KiCad 10", "path": "/know-how/kicad/", "icon": "triangle-alert" },
-        { "title": "Come si verifica", "path": "/know-how/verifica/", "icon": "check-check" }
+        {
+          "title": "Trappole di KiCad 10",
+          "path": "/know-how/kicad/",
+          "icon": "triangle-alert"
+        },
+        {
+          "title": "Come si verifica",
+          "path": "/know-how/verifica/",
+          "icon": "check-check"
+        }
       ]
     },
-    { "title": "Stato e lavori aperti", "path": "/stato/", "icon": "list-checks" },
-    { "title": "Riferimenti", "path": "/riferimenti/", "icon": "link" },
-    { "title": "GitHub", "path": "https://github.com/cagianx/pellet-meter", "icon": "github", "external": true }
+    {
+      "title": "Stato e lavori aperti",
+      "path": "/stato/",
+      "icon": "list-checks"
+    },
+    {
+      "title": "Riferimenti",
+      "path": "/riferimenti/",
+      "icon": "link"
+    },
+    {
+      "title": "GitHub",
+      "path": "https://github.com/cagianx/pellet-meter",
+      "icon": "github",
+      "external": true
+    }
   ],
   "plugins": {
     "seo": {
       "defaultDescription": "Sensore di livello del pellet a batteria: XIAO ESP32C6, VL53L1X, BLE advertising BTHome v2 verso Home Assistant."
-    }
+    },
+    "git": false
   }
 }
