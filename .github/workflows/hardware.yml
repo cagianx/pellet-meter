@@ -29,6 +29,12 @@ jobs:
       image: kicad/kicad:10.0.8-full
       options: --user root
 
+    # Nei job in container Actions sceglie la shell da solo, e in questa
+    # immagine sceglie 'sh -e {0}' anche se /usr/bin/bash c'e'.
+    defaults:
+      run:
+        shell: bash
+
     steps:
       - uses: actions/checkout@v5
 
