@@ -36,15 +36,19 @@ ha proposal (perche'), spec (cosa deve fare), design (come) e task.
 
 | Change | Task aperti | Contenuto |
 |---|---|---|
+| `pcb-kicad` | 16 di 20 | Layout del PCB, verifica di accoppiamento con il contenitore, render della scheda |
 | `firmware-bthome` | 14 di 19 | Acquisizione, pacchetto BTHome, ciclo di deep sleep |
 | `calibrazione-home-assistant` | 13 di 13 | Template di calibrazione, avvisi, grandezze derivate |
+| `contenitore-montaggio` | 11 di 11 | Tappo USB-C, superficie di incollaggio, chiusura a scatto |
 | `schema-leggibile` | 8 di 10 | Disposizione dello schema nella GUI, lavoro da fare in KiCad |
+| `immagine-di-sviluppo` | 4 di 10 | Resta l'adozione dell'immagine nei workflow |
 
 Archiviati, con le spec passate in `openspec/specs/`:
 
 | Change | Capability |
 |---|---|
 | `contenitore-3d` | `contenitore` — forma, aperture e vincoli meccanici dell'involucro |
+| `render-ricchi` | `render` — viste, quote e vista interattiva dei modelli |
 
 ```bash
 openspec list                 # stato dei change
