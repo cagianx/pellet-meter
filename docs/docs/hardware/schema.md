@@ -81,6 +81,7 @@ sistemare":
 | Etichette `BAT_SENSE` sovrapposte | sul partitore, tra R1 e R2 | due etichette della stessa rete finiscono una sopra l'altra: illeggibili entrambe |
 | `GND` e `100nF` collisi | su C3, rete VSENS | il valore del condensatore si sovrappone all'etichetta di massa |
 | Disegno in un angolo | tutto il foglio | il contenuto occupa **234 × 129 mm**, il 24% di un A3 |
+| Blocco di Q1/R3/JP1 stretto | in basso a destra | le etichette `SENS_CTRL`, `SW_OUT` e `3V3_OUT` si accavallano fra loro e con la nota sul breakout |
 
 Quei 234 × 129 mm starebbero in un **A4 orizzontale** (297 × 210), e ridurre
 il formato e' gia' previsto. Ma l'angolo in basso a destra del disegno
