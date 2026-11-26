@@ -53,7 +53,10 @@ jobs:
           fi
 
       - name: Render
-        run: ./tools/render.sh
+        # --strict: in CI nessuna immagine puo' essere saltata perche'
+        # manca uno strumento. Un salto qui diventa un buco sul sito con
+        # la pipeline verde, ed e' gia' successo.
+        run: ./tools/render.sh --strict
 
       - uses: actions/upload-artifact@v4
         with:

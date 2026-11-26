@@ -9,8 +9,9 @@
 # Lo stesso script gira in locale e nel workflow docs: una sola definizione
 # di "come si fa un render", non due che divergono.
 #
-# Quello che non esiste ancora viene saltato con un avviso, non e' un errore:
-# il PCB e il contenitore arriveranno dopo lo schema.
+# Quello che non esiste ancora viene saltato con un avviso: oggi e' il caso
+# del PCB, che e' deliberatamente rimandato. Quello che esiste ma non si
+# riesce a renderizzare e' un errore, e con --strict lo e' sempre.
 
 set -euo pipefail
 
@@ -19,9 +20,28 @@ cd "$(dirname "$0")/.."
 OUT=docs/docs/assets/render
 mkdir -p "$OUT"
 
+# Con --strict nessun salto e' ammesso: se una sorgente esiste ma manca lo
+# strumento per renderizzarla, lo script fallisce invece di avvisare.
+# In locale saltare va bene — si lavora alla documentazione senza avere
+# KiCad installato. In CI no: un salto diventa un'immagine mancante sul
+# sito, con la pipeline verde.
+strict=0
+[ "${1:-}" = "--strict" ] && strict=1
+
 avvisi=0
 
 nota() {
+  if [ "$strict" = 1 ]; then
+    echo "  ERRORE: $*"
+    exit 1
+  fi
+  echo "  -> $*"
+  avvisi=$((avvisi + 1))
+}
+
+# Quello che manca perche' non esiste ancora non e' un errore nemmeno in
+# strict: il PCB e il contenitore arrivano quando arrivano.
+assente() {
   echo "  -> $*"
   avvisi=$((avvisi + 1))
 }
@@ -103,7 +123,7 @@ fi
 
 echo "== PCB"
 if ! compgen -G 'kicad/*.kicad_pcb' >/dev/null; then
-  nota "nessun .kicad_pcb: il prototipo e' su millefori, il PCB e' rimandato."
+  assente "nessun .kicad_pcb: il prototipo e' su millefori, il PCB e' rimandato."
 elif ! command -v kicad-cli >/dev/null; then
   nota "kicad-cli non trovato, render del PCB saltato."
 else
@@ -119,7 +139,7 @@ fi
 
 echo "== contenitore"
 if ! compgen -G 'enclosure/*.scad' >/dev/null; then
-  nota "nessun .scad: il contenitore non e' ancora stato disegnato."
+  assente "nessun .scad: il contenitore non e' ancora stato disegnato."
 elif ! command -v openscad >/dev/null; then
   nota "openscad non trovato, render del contenitore saltato."
 else
@@ -142,11 +162,15 @@ else
       # l'anteprima mostra artefatti sulle intersezioni.
       # --autocenter e --viewall inquadrano il pezzo: senza, la camera di
       # default lo taglia o lo lascia lontano.
+      # stderr va in un file invece che a schermo: OpenSCAD stampa pagine
+      # di statistiche della cache CGAL anche quando tutto va bene. Il
+      # file viene mostrato solo se qualcosa non torna, dove serve.
+      log=$(mktemp)
       "${oscad[@]}" --render \
         --imgsize=1600,1200 \
         --colorscheme=Tomorrow \
         --autocenter --viewall \
-        -o "$OUT/$nome.png" "$f" >/dev/null
+        -o "$OUT/$nome.png" "$f" >/dev/null 2>"$log" || true
 
       # OpenSCAD esce con codice 0 anche quando non riesce ad aprire il
       # contesto OpenGL: stampa l'errore e scrive un PNG da zero byte.
@@ -154,9 +178,12 @@ else
       # rotta con la CI verde — e' gia' successo.
       if [ ! -s "$OUT/$nome.png" ]; then
         echo "ERRORE: $nome.png e' vuoto. Il render e' fallito nonostante"
-        echo "        openscad sia uscito con successo."
+        echo "        openscad sia uscito con successo. Output:"
+        sed 's/^/        /' "$log"
+        rm -f "$log"
         exit 1
       fi
+      rm -f "$log"
       echo "  $nome.png $(stat -c%s "$OUT/$nome.png") byte"
     done
   fi

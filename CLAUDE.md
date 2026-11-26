@@ -14,11 +14,11 @@ Hardware: **Seeed XIAO ESP32C6** + **VL53L1X** (ToF, I²C) + LiPo 1000 mAh.
 kicad/              progetto KiCad 10
   pellet-meter.kicad_sch    schema elettrico (fonte di verita')
   lib/                      simboli e footprint di progetto
-  tools/                    script che hanno generato lo schema (bootstrap)
+  tools/check_netlist.py    verifica le reti nodo per nodo
   out/                      PDF/SVG esportati — generati, non versionati
 enclosure/          contenitore parametrico OpenSCAD
 firmware/           progetto ESP-IDF (C17, target esp32c6)
-tools/              render.sh — immagini per il sito e il README
+tools/              render.sh (immagini), check_case.py (quote del contenitore)
 docs/               sito di documentazione (docmd) pubblicato su GitHub Pages
 ```
 
