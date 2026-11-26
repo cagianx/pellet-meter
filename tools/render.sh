@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
-# Genera le immagini che il sito e il README pubblicano.
+# Genera le immagini — e l'STL del visualizzatore — che il sito e il README
+# pubblicano.
 #
 # Le uscite finiscono in docs/docs/assets/render/, che NON e' versionata:
 # sono file generati, e la regola del repo e' che li produce la CI. Il sito
@@ -64,6 +65,21 @@ printf "  %-13s %s\n" "display" "${DISPLAY:-${WAYLAND_DISPLAY:-nessuno}}"
 printf "  %-13s %s\n" "strict" "$strict"
 echo
 
+# ImageMagick 7 si chiama 'magick', il 6 'identify'/'convert'. I container
+# Ubuntu hanno ancora il 6: dare per scontato il 7 vorrebbe dire saltare i
+# controlli sulle immagini in CI e accorgersene guardando il sito.
+# Serve sia allo schema (ritaglio) sia al contenitore (scena non vuota),
+# quindi la scelta si fa una volta sola, qui.
+if command -v magick >/dev/null; then
+  im_identify() { magick identify "$@"; }
+  im_convert() { magick "$@"; }
+elif command -v identify >/dev/null && command -v convert >/dev/null; then
+  im_identify() { identify "$@"; }
+  im_convert() { convert "$@"; }
+else
+  im_identify() { return 1; }
+fi
+
 # --- Schema elettrico ------------------------------------------------------
 
 echo "== schema elettrico"
@@ -103,19 +119,6 @@ else
     # Questo ritaglia l'inquadratura, non sistema la disposizione: i
     # componenti ammassati in un angolo restano il task 1.4, che e' lavoro
     # da GUI.
-    # ImageMagick 7 si chiama 'magick', il 6 'identify'/'convert'. I
-    # container Ubuntu hanno ancora il 6: dare per scontato il 7 vorrebbe
-    # dire saltare il ritaglio in CI e accorgersene guardando il sito.
-    if command -v magick >/dev/null; then
-      im_identify() { magick identify "$@"; }
-      im_convert() { magick "$@"; }
-    elif command -v identify >/dev/null && command -v convert >/dev/null; then
-      im_identify() { identify "$@"; }
-      im_convert() { convert "$@"; }
-    else
-      im_identify() { return 1; }
-    fi
-
     if ! im_identify -format "%w" "$OUT/schema.png" >/dev/null 2>&1; then
       nota "ImageMagick non trovato: immagini non ritagliate."
     else
@@ -174,21 +177,43 @@ else
   if [ ${#oscad[@]} -eq 0 ]; then
     nota "niente display e niente xvfb-run: render del contenitore saltato."
   else
-    for f in enclosure/*.scad; do
-      nome=$(basename "$f" .scad)
+    # Sorgenti gia' coperti da una vista scelta: quelli che restano fuori
+    # vengono renderizzati lo stesso, con l'inquadratura automatica.
+    coperti=""
+    im_avvisato=0
+
+    # vista <nome> <sorgente> <elevazione> <azimut> <proiezione> [extra...]
+    #
+    # --camera vuole translate_x,y,z,rot_x,y,z,dist, ma translate e dist
+    # restano a zero: li ricalcolano --autocenter e --viewall sul pezzo
+    # vero, cosi' una quota che cambia non lascia il render tagliato o
+    # lontano. A mano restano i due angoli e nient'altro.
+    #
+    #   elevazione  0 = dall'alto, 90 = di fianco, 180 = dal basso
+    #   azimut      0 = si guarda la parete y=0; crescendo si gira attorno
+    #               al pezzo in senso antiorario
+    #   proiezione  p = prospettica (le viste di forma), o = ortogonale
+    #               (le quote: in prospettiva una quota misura male)
+    vista() {
+      local nome=$1 sorgente=$2 elev=$3 azim=$4 proiezione=$5
+      shift 5
+      coperti="$coperti $sorgente"
+
       # --render forza la geometria esatta invece dell'anteprima rapida:
       # l'anteprima mostra artefatti sulle intersezioni.
-      # --autocenter e --viewall inquadrano il pezzo: senza, la camera di
-      # default lo taglia o lo lascia lontano.
       # stderr va in un file invece che a schermo: OpenSCAD stampa pagine
       # di statistiche della cache CGAL anche quando tutto va bene. Il
       # file viene mostrato solo se qualcosa non torna, dove serve.
+      local log
       log=$(mktemp)
       "${oscad[@]}" --render \
         --imgsize=1600,1200 \
         --colorscheme=Tomorrow \
+        --projection="$proiezione" \
+        --camera="0,0,0,$elev,0,$azim,0" \
         --autocenter --viewall \
-        -o "$OUT/$nome.png" "$f" >/dev/null 2>"$log" || true
+        "$@" \
+        -o "$OUT/$nome.png" "$sorgente" >/dev/null 2>"$log" || true
 
       # OpenSCAD esce con codice 0 anche quando non riesce ad aprire il
       # contesto OpenGL: stampa l'errore e scrive un PNG da zero byte.
@@ -201,9 +226,95 @@ else
         rm -f "$log"
         exit 1
       fi
+
+      # Un PNG pieno di solo sfondo pesa comunque qualche centinaio di
+      # byte, quindi il controllo sulla dimensione non lo vede. Succede
+      # ogni volta che la scena esce vuota: un modulo rinominato in
+      # case.scad e non qui, per esempio, fa stampare un avviso a OpenSCAD
+      # e produce un'immagine bianca, con la CI verde.
+      # Lo sfondo da solo ha uno o due colori; un render, decine.
+      if colori=$(im_identify -format "%k" "$OUT/$nome.png" 2>/dev/null); then
+        if [ "$colori" -le 8 ]; then
+          echo "ERRORE: $nome.png ha $colori colore(i): la scena e' vuota."
+          echo "        Il file c'e' e non e' vuoto, ma non c'e' il pezzo."
+          sed 's/^/        /' "$log"
+          rm -f "$log"
+          exit 1
+        fi
+      else
+        colori="?"
+        if [ "$im_avvisato" = 0 ]; then
+          im_avvisato=1
+          nota "ImageMagick non trovato: non si controlla se la scena e' vuota."
+        fi
+      fi
+
       rm -f "$log"
-      echo "  $nome.png $(stat -c%s "$OUT/$nome.png") byte"
+      echo "  $nome.png $(stat -c%s "$OUT/$nome.png") byte, $colori colori"
+    }
+
+    # Le quote sono testo, e senza font installati text() non disegna
+    # niente: OpenSCAD non avvisa, esce con successo, e il render quotato
+    # viene fuori con le linee di quota e senza numeri. E' stato provato
+    # con un fontconfig vuoto, ed e' andata esattamente cosi'.
+    #
+    # Non c'e' un avviso da intercettare, quindi si chiede a OpenSCAD di
+    # produrre del testo e si guarda se ne esce geometria. Questo prova la
+    # cosa che interessa — text() funziona — invece di una sua spia, tipo
+    # "il pacchetto dei font risulta installato".
+    sonda=$(mktemp --suffix=.scad)
+    sonda_stl=$(mktemp -u --suffix=.stl)
+    echo 'linear_extrude(1) text("0123456789", size = 10);' > "$sonda"
+    "${oscad[@]}" -o "$sonda_stl" --export-format asciistl "$sonda" \
+      >/dev/null 2>&1 || true
+    if ! grep -q facet "$sonda_stl" 2>/dev/null; then
+      echo "ERRORE: text() non produce geometria: mancano i font."
+      echo "        Il render quotato uscirebbe con le linee di quota e"
+      echo "        senza numeri, senza che niente fallisca."
+      rm -f "$sonda" "$sonda_stl"
+      exit 1
+    fi
+    rm -f "$sonda" "$sonda_stl"
+
+    # Le angolazioni sono tre, scelte perche' mostrano cose diverse: una
+    # vista in piu' costa un render intero e, se non aggiunge niente,
+    # costringe solo a guardare due volte la stessa scatola.
+    #
+    # tre quarti   i due vani, il divisorio e il labbro del coperchio
+    # dal basso    foro ottico svasato e superficie d'appoggio (il pezzo e'
+    #              capovolto nel modello, vedi viste/case-sotto.scad)
+    # lato USB-C   l'apertura sulla parete corta, che dall'alto si intuisce
+    #              appena
+    vista case          enclosure/case.scad             60  30 p
+    vista case-sotto    enclosure/viste/case-sotto.scad 60 210 p
+    vista case-usb      enclosure/case.scad             80 250 p \
+                        -D 'pezzo="scatola"'
+    # La quarta non e' un'angolazione in piu': e' la stessa scatola con le
+    # quote d'ingombro, che vengono dai parametri del modello.
+    vista case-quote    enclosure/viste/case-quote.scad 60  30 o
+
+    # Un .scad che nessuna vista nomina viene comunque pubblicato, con
+    # l'inquadratura automatica: meglio un render generico che nessun
+    # render, e l'avviso ricorda a chi aggiunge un pezzo di scegliergli
+    # un'angolazione.
+    for f in enclosure/*.scad; do
+      case " $coperti " in *" $f "*) continue;; esac
+      echo "  $f non ha una vista scelta: inquadratura automatica."
+      vista "$(basename "$f" .scad)" "$f" 60 30 p
     done
+
+    # L'STL che il visualizzatore del sito carica. E' lo stesso solido dei
+    # render, non un'esportazione a parte: se il modello non si chiude, qui
+    # si vede subito. binstl perche' pesa un terzo dell'ASCII, e il
+    # visualizzatore lo scarica a ogni apertura della pagina.
+    "${oscad[@]}" --export-format binstl \
+      -o "$OUT/case.stl" enclosure/case.scad >/dev/null 2>&1 || true
+    if [ ! -s "$OUT/case.stl" ]; then
+      echo "ERRORE: case.stl e' vuoto: il visualizzatore non avrebbe niente"
+      echo "        da mostrare, e la pagina resterebbe muta."
+      exit 1
+    fi
+    echo "  case.stl $(stat -c%s "$OUT/case.stl") byte"
   fi
 fi
 

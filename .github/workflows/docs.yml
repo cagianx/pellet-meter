@@ -62,7 +62,12 @@ jobs:
           # saltata in silenzio e il job restava verde.
           if find enclosure -maxdepth 1 -name '*.scad' | grep -q .; then
             echo "trovati sorgenti OpenSCAD, installo openscad e xvfb"
-            apt-get install -y --no-install-recommends openscad xvfb
+            # I font servono al render quotato: senza, text() non disegna
+            # niente, OpenSCAD avvisa ed esce con successo, e il risultato
+            # e' un disegno con le linee di quota e senza numeri. Con
+            # --no-install-recommends non arriva nessun font per conto suo.
+            apt-get install -y --no-install-recommends \
+              openscad xvfb fonts-dejavu-core
           else
             echo "nessun sorgente OpenSCAD"
           fi
@@ -125,18 +130,56 @@ jobs:
         # con un PNG da zero byte, con la CI verde.
         run: |
           mancanti=0
-          # Il sito e il README: il README punta agli stessi file via URL
-          # di Pages, quindi un'immagine che serve solo a lui sparirebbe
-          # senza che nessun controllo se ne accorga.
-          riferimenti=$(grep -rhoE 'assets/render/[A-Za-z0-9_.-]+' site ../README.md | sort -u)
-          for f in $riferimenti; do
-            if [ -s "site/$f" ]; then
-              echo "ok      $f ($(stat -c%s "site/$f") byte)"
+
+          # Quali file: quelli che produciamo noi. Le immagini e l'STL in
+          # assets/render/, e il visualizzatore in assets/js/. Il resto di
+          # assets/ e' roba di docmd, che ne referenzia anche qualcuno che
+          # non genera: controllarla farebbe fallire la CI per un difetto
+          # che non e' nostro e che non si puo' correggere da qui.
+          nostri='assets/render/[A-Za-z0-9_.-]+|assets/js/stl-viewer\.js'
+
+          # Dove: ogni riferimento viene risolto rispetto alla pagina che
+          # lo contiene, non rispetto alla radice del sito. docmd riscrive
+          # href e src di link e immagini in percorsi relativi al livello
+          # della pagina, ma lascia stare i tag <script>: un percorso con
+          # un livello di troppo punta a un file che esiste davvero —
+          # solo non da li' — e il controllo deve accorgersene.
+          #
+          # Valgono solo i riferimenti dentro un attributo src o href: il
+          # nome di un file compare anche nel testo delle pagine che lo
+          # descrivono, e quello non e' un riferimento da risolvere.
+          while read -r pagina riferimento; do
+            [ -z "$riferimento" ] && continue
+            risolto=$(realpath -m --relative-to=site \
+                        "$(dirname "$pagina")/$riferimento")
+            if [ -s "site/$risolto" ]; then
+              echo "ok      $risolto ($(stat -c%s "site/$risolto") byte)"
             else
-              echo "MANCA   $f"
+              echo "MANCA   $riferimento, citato da ${pagina#site/}"
+              mancanti=1
+            fi
+          #
+          # Solo i riferimenti dentro un attributo src o href: il nome di
+          # un file puo' comparire anche nel testo di una pagina che lo
+          # descrive, e quello non e' un riferimento da risolvere.
+          done <<EOF
+          $(grep -rHoE "(src|href)=\"((\.\./)*|\./)?($nostri)\"" \
+              site --include='*.html' \
+            | sed -E 's/:(src|href)="/ /; s/"$//' | sort -u)
+          EOF
+
+          # Il README punta agli stessi file con l'URL di GitHub Pages,
+          # quindi un'immagine che serve solo a lui sparirebbe senza che
+          # nessun controllo sul sito se ne accorga.
+          for f in $(grep -ohE "$nostri" ../README.md | sort -u); do
+            if [ -s "site/$f" ]; then
+              echo "ok      $f (README, $(stat -c%s "site/$f") byte)"
+            else
+              echo "MANCA   $f (README)"
               mancanti=1
             fi
           done
+
           exit $mancanti
 
       - name: Il sito non deve essere vuoto
