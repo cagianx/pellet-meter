@@ -20,10 +20,10 @@ torna in deep sleep. Home Assistant lo riconosce da solo.
 | Alimentazione | LiPo 3,7 V 1000 mAh con circuito di protezione |
 | Radio | BLE advertising, BTHome v2 |
 
-Risveglio ogni **10 minuti**. Consumo stimato nell'ordine di **1 mAh al
-giorno**, cioe' oltre un anno di autonomia teorica — a quel punto conta piu'
-l'autoscarica della batteria che il dispositivo. La stima va confermata con
-la misura sul banco.
+Risveglio ogni **10 minuti**. Consumo stimato **~1,3 mAh al giorno**, cioe'
+oltre un anno di autonomia teorica — a quel punto conta piu' l'autoscarica
+della batteria che il dispositivo. E' una stima: la misura sul banco e'
+ancora da fare.
 
 ## Stato
 

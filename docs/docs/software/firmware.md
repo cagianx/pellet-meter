@@ -138,19 +138,20 @@ binario e occupazione di flash.
 
 ## Consumi stimati
 
-| Scenario | Consumo | Autonomia con 1000 mAh |
+Con il risveglio ogni 10 minuti, cioe' 144 cicli al giorno:
+
+| Voce | Stima | Da dove viene |
 |---|---|---|
-| BLE advertising, risveglio ogni 15 min | ~1 mAh/giorno | oltre un anno (conta piu' l'autoscarica) |
+| A riposo | ~0,4 mAh/giorno | ~17 µA continui: ~15 µA di deep sleep dello XIAO piu' ~2,1 µA del partitore |
+| Parte attiva | ~0,9 mAh/giorno | 144 cicli di risveglio, misura e advertising |
+| **Totale** | **~1,3 mAh/giorno** | oltre un anno con una LiPo da 1000 mAh |
 | Wi-Fi + MQTT, per confronto | ~7 mAh/giorno | 4–5 mesi |
 
-Sono stime: la misura reale del consumo in deep sleep e in trasmissione e' un
-task aperto, ed e' la variabile che decide davvero l'autonomia.
-
-:::note
-La riga da ~1 mAh/giorno era calcolata su un risveglio ogni **15** minuti.
-Con i 10 minuti decisi sopra i cicli al giorno passano da 96 a 144: cresce di
-una volta e mezza la parte attiva, mentre la parte a riposo — ~17 µA tra
-deep sleep dello XIAO e partitore, cioe' ~0,4 mAh al giorno — non cambia.
-Quanto pesino l'una sull'altra lo dira' il calcolo per ciclo con i valori
-veri, che e' il task 4.4 del change `firmware-bthome`.
+:::warning
+**La parte attiva e' una stima propagata, non una misura.** Deriva da un
+calcolo precedente fatto su un risveglio ogni 15 minuti, riscalato sui 144
+cicli di oggi. Il consumo per ciclo con i valori veri e' il **task 4.4** del
+change `firmware-bthome`, ed e' la variabile che decide davvero
+l'autonomia: finche' non e' misurato, il totale qui sopra va letto come un
+ordine di grandezza.
 :::

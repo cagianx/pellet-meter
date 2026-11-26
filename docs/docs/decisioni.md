@@ -75,7 +75,7 @@ sostenere i picchi di corrente del VCSEL.
 | HC-SR04 | Funziona a 5 V e assorbe ~2 mA a riposo: incompatibile con la batteria |
 | JSN-SR04T / A02YYUW | Zona cieca di 20–25 cm, troppo per la tramoggia di una stufa |
 | Shelly BLU Distance | Prodotto pronto (~25 €, BTHome nativo), ma il range parte da 0,25 m: valido **solo se** a serbatoio pieno restano ≥ 25 cm sotto il coperchio. Non si trova su Amazon.it |
-| Wi-Fi + MQTT | ~7 mAh al giorno contro ~1: ridurrebbe l'autonomia a 4–5 mesi |
+| Wi-Fi + MQTT | ~7 mAh al giorno contro ~1,3: ridurrebbe l'autonomia a 4–5 mesi |
 | ESPHome | BTHome con deep sleep richiede un componente esterno, e riporterebbe la calibrazione nel dispositivo |
 | Arduino (`arduino-esp32`) | Librerie pronte per il VL53L1X, ma il core inizializza periferiche da spegnere a mano e il raw advertising va comunque forzato: il tempo risparmiato all'inizio si ripaga subito dopo, sul consumo |
 

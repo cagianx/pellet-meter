@@ -23,17 +23,19 @@ Assistant lo riconosce da solo.
 | Alimentazione | LiPo 3,7 V 1000 mAh con circuito di protezione |
 | Radio | BLE advertising, BTHome v2 |
 
-Con un risveglio ogni 15 minuti il consumo stimato e' di circa **1 mAh al
+Il risveglio e' ogni **10 minuti** e il consumo stimato e' di **~1,3 mAh al
 giorno**: oltre un anno di autonomia teorica, a quel punto conta piu'
-l'autoscarica della batteria che il dispositivo.
+l'autoscarica della batteria che il dispositivo. E' una stima, e il
+[dettaglio di come e' composta](/software/firmware/) dice anche quanto
+fidarsene.
 
 ## A che punto siamo
 
 | | |
 |---|---|
-| Schema elettrico | fatto, ERC pulito e reti verificate |
-| Contenitore 3D | da fare |
-| Firmware | da fare |
+| Schema elettrico | fatto, ERC pulito e reti verificate; disposizione da curare |
+| Contenitore 3D | modello OpenSCAD parametrico, quote verificate contro il solido |
+| Firmware | scheletro ESP-IDF che compila, switch RF; misura e BTHome da scrivere |
 | Configurazione Home Assistant | da fare |
 
 Il repo fornisce **il progetto**, non la realizzazione: comprare, saldare,

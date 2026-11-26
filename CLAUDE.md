@@ -137,13 +137,22 @@ l'unico punto di passaggio.
    **Prima di cancellare**, verificare che il know-how dentro quella cosa sia
    gia' conservato in `docs/`: si elimina l'artefatto, non la conoscenza.
 
-3. **I file `.md` si correggono da soli, senza chiedere.** Quando si impara
-   come si usa davvero uno strumento, o quando l'utente dice di usarne uno
-   diverso, i file di documentazione — questo compreso, `README.md`, le
-   pagine di `docs/`, i design dei change — vanno aggiornati **nello stesso
-   lavoro**, non segnalati come "da sistemare". Vale anche per le
-   incoerenze trovate di passaggio: un comando che non e' piu' quello
-   giusto, un percorso cambiato, un conteggio sbagliato.
+3. **La documentazione descrive il repo com'e' adesso. Sempre.** Non come
+   era, non come sara'. Quando si impara come si usa davvero uno
+   strumento, o quando l'utente dice di usarne uno diverso, i file di
+   documentazione — questo compreso, `README.md`, le pagine di `docs/`, i
+   design dei change — vanno aggiornati **nello stesso lavoro**, non
+   segnalati come "da sistemare".
+
+   In particolare: **i riferimenti a cose che non esistono piu' si
+   eliminano**. Un file cancellato, uno script sostituito, un comando che
+   non si usa piu', una cartella rinominata, una decisione ribaltata. Non
+   si lasciano "per storia": la storia sta in git, la documentazione
+   descrive il presente.
+
+   Vale anche per le incoerenze trovate di passaggio: un percorso
+   cambiato, un conteggio sbagliato, un'istruzione che non funziona piu'.
+
    La ragione e' la stessa della regola 1: una documentazione che descrive
    un passato non dichiarato e' peggio di nessuna documentazione, perche'
    chi la legge non sa quale meta' e' ancora vera. **Non si chiede il
@@ -158,6 +167,11 @@ l'unico punto di passaggio.
 
 ## Convenzioni di lavoro
 
+- **Trunk based: si lavora sempre e solo su `main`.** Niente feature
+  branch, niente pull request di servizio. Commit piccoli e frequenti
+  direttamente su main, e push. La CI e' la rete di protezione, ed e' per
+  questo che deve restare severa: in trunk based un controllo indulgente
+  non protegge niente.
 - Commit frequenti; push quando si arriva a un punto stabile e verificato.
 - Quando piu' agenti lavorano in parallelo, **committare con path espliciti**
   (`git add kicad/`), mai `git add -A`: si rischia di portarsi dietro il
