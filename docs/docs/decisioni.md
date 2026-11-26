@@ -17,6 +17,9 @@ ribaltata per distrazione sei mesi dopo.
 | Radio | BLE advertising, BTHome v2 | Riconosciuto nativamente da Home Assistant, consumo minimo, nessuna connessione da mantenere |
 | Calibrazione | In Home Assistant, non nel firmware | Il firmware manda millimetri grezzi: ricalibrare non deve richiedere un riflash |
 | Spegnimento sensore | Alimentato da un GPIO | Il VL53L1X assorbe poco; si spegne mettendo il pin a livello basso |
+| Framework firmware | ESP-IDF 5.x + NimBLE | Nessuno strato tra il codice e le tre cose che decidono l'autonomia: deep sleep, stato dei GPIO, switch RF |
+| Device info BTHome | `0x44`, trigger-based | In Home Assistant le entita' di un dispositivo *sleepy* sono sempre disponibili; con `0x40` un advertisement perso lo fa sparire |
+| Intervallo di risveglio | 10 minuti | Molto piu' spesso del necessario per il livello, e sotto i 900 s del fallback di `habluetooth` |
 
 ## Decisioni riviste durante lo sviluppo
 
@@ -73,7 +76,8 @@ sostenere i picchi di corrente del VCSEL.
 | JSN-SR04T / A02YYUW | Zona cieca di 20–25 cm, troppo per la tramoggia di una stufa |
 | Shelly BLU Distance | Prodotto pronto (~25 €, BTHome nativo), ma il range parte da 0,25 m: valido **solo se** a serbatoio pieno restano ≥ 25 cm sotto il coperchio. Non si trova su Amazon.it |
 | Wi-Fi + MQTT | ~7 mAh al giorno contro ~1: ridurrebbe l'autonomia a 4–5 mesi |
-| ESPHome | BTHome con deep sleep richiede un componente esterno |
+| ESPHome | BTHome con deep sleep richiede un componente esterno, e riporterebbe la calibrazione nel dispositivo |
+| Arduino (`arduino-esp32`) | Librerie pronte per il VL53L1X, ma il core inizializza periferiche da spegnere a mano e il raw advertising va comunque forzato: il tempo risparmiato all'inizio si ripaga subito dopo, sul consumo |
 
 ## Riferimento architetturale
 
@@ -82,12 +86,24 @@ Il firmware [`ThyMYthOS/xm126-bthome-tank`](https://community.home-assistant.io/
 batteria: trasmette solo quando il valore cambia o allo scadere di un
 intervallo massimo di heartbeat.
 
+## Il rovescio della medaglia di `0x44`
+
+Vale la pena saperlo prima di scoprirlo quando serve: dichiarando il
+dispositivo *trigger-based*, Home Assistant non lo marca **mai** come non
+disponibile. Batteria morta, sensore guasto e tutto funzionante hanno lo
+stesso aspetto.
+
+Il controllo di vitalita' va quindi fatto sull'**eta' del dato**, non sulla
+disponibilita' dell'entita'. E' un requisito per il change
+`calibrazione-home-assistant`, non un dettaglio del firmware. Il codice di
+Home Assistant che lo determina e' citato in
+[Pacchetto BTHome](/software/bthome/).
+
 ## Punti ancora aperti
 
 Sono registrati come Open Questions nei change OpenSpec, vedi
 [Stato e lavori aperti](/stato/):
 
-- Framework del firmware: ESP-IDF oppure Arduino
-- Intervallo di risveglio (proposta iniziale: 10 minuti)
-- Device info `0x40` (regolare) oppure `0x44` (trigger-based, dispositivo che dorme)
-- Cifratura BTHome con bindkey: opzionale
+- Cifratura BTHome con bindkey: opzionale, si valuta dopo
+- Soglia di avviso e soglia sul rumore per il rilevamento della ricarica:
+  parametri del change `calibrazione-home-assistant`

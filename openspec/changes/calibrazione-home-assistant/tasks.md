@@ -11,6 +11,7 @@
 
 - [ ] 2.1 Automazione di avviso sotto soglia, con la soglia come parametro
 - [ ] 2.2 Evitare che l'avviso si ripeta a ogni lettura sotto soglia
+- [ ] 2.3 Avviso di dato fermo basato sull'eta' dell'ultimo aggiornamento, non sulla disponibilita': con device info `0x44` l'entita' risulta sempre disponibile
 
 ## 3. Grandezze derivate
 

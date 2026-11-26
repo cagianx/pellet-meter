@@ -43,8 +43,11 @@ openspec show <nome>          # un change nel dettaglio
 openspec validate --all
 ```
 
-Nessuno dei quattro dipende dagli altri per iniziare. `firmware-bthome` ha
-tre decisioni da chiudere prima di scrivere codice, elencate qui sotto.
+Nessuno dei quattro dipende dagli altri per iniziare. Le tre decisioni che
+bloccavano `firmware-bthome` sono chiuse: framework **ESP-IDF 5.x + NimBLE**,
+device info **`0x44`** (trigger-based), risveglio ogni **10 minuti**. Le
+ragioni sono in [Decisioni di progetto](/decisioni/) e in
+[Firmware](/software/firmware/).
 
 ## I numeri che mancano
 
@@ -58,13 +61,13 @@ e' renderli facili da inserire e da cambiare.
 
 ## Decisioni ancora aperte
 
-Registrate come Open Questions nel design di `firmware-bthome`:
+- Cifratura BTHome con bindkey: opzionale, si valuta dopo
+- Soglia di avviso e soglia sul rumore per il rilevamento della ricarica:
+  sono parametri del change `calibrazione-home-assistant`
 
-- Framework: ESP-IDF oppure Arduino
-- Intervallo di risveglio (proposta iniziale: 10 minuti)
-- Device info `0x40` oppure `0x44`, da decidere verificando come Home
-  Assistant gestisce la disponibilita'
-- Cifratura BTHome con bindkey: opzionale
+Con `0x44` il dispositivo non risulta **mai** non disponibile in Home
+Assistant: il controllo di vitalita' va fatto sull'eta' del dato. E' un
+requisito che ricade su `calibrazione-home-assistant`.
 
 ## Idee rimandate
 

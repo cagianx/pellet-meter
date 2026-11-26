@@ -2,9 +2,9 @@
 
 ## 1. Decisioni da chiudere prima
 
-- [ ] 1.1 Scegliere il framework tra ESP-IDF e Arduino, motivando la scelta in docs/
-- [ ] 1.2 Decidere device info `0x40` o `0x44`, documentando come HA gestisce la disponibilita' nei due casi
-- [ ] 1.3 Fissare l'intervallo di risveglio iniziale e il criterio per cambiarlo
+- [x] 1.1 Scegliere il framework tra ESP-IDF e Arduino, motivando la scelta in docs/
+- [x] 1.2 Decidere device info `0x40` o `0x44`, documentando come HA gestisce la disponibilita' nei due casi
+- [x] 1.3 Fissare l'intervallo di risveglio iniziale e il criterio per cambiarlo
 
 ## 2. Struttura del firmware
 

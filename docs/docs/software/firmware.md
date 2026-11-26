@@ -7,9 +7,59 @@ description: "Ciclo di funzionamento e vincoli di consumo."
 
 :::warning
 **Non ancora scritto.** Qui c'e' il progetto del ciclo e i vincoli da
-rispettare. Il lavoro e' tracciato nel change OpenSpec `firmware-bthome`,
-dove sono registrate anche le decisioni ancora aperte.
+rispettare. Il lavoro e' tracciato nel change OpenSpec `firmware-bthome`.
+Le tre decisioni che bloccavano l'inizio sono chiuse, e sono qui sotto.
 :::
+
+## Le tre decisioni chiuse
+
+### Framework: ESP-IDF 5.x con NimBLE
+
+Le alternative erano Arduino (`arduino-esp32`) ed ESPHome. ESPHome era gia'
+escluso: BTHome in trasmissione richiede un componente esterno, e porterebbe
+di fatto la calibrazione nel dispositivo, contro una scelta di progetto
+fissata.
+
+Tra ESP-IDF e Arduino la ragione e' che **l'obiettivo del progetto e' il
+consumo**, e ESP-IDF e' l'unico dei due che non mette strati tra il codice e
+le tre cose che decidono l'autonomia: la sequenza di deep sleep, lo stato dei
+GPIO prima di dormire, e lo switch RF dell'antenna. Il core Arduino inizializza
+periferiche che poi vanno spente a mano, e il raw advertising va comunque
+forzato: il risparmio di tempo iniziale si paga subito dopo.
+
+Il costo della scelta e' il driver del sensore: in Arduino ci sono librerie
+pronte (Pololu, SparkFun), in ESP-IDF si parte dall'**API ULD di ST**, che e'
+C portabile e si innesta come componente scrivendo solo le funzioni di
+piattaforma per l'I²C.
+
+### Device info `0x44`, trigger-based
+
+Decisa leggendo il codice di Home Assistant, non la documentazione: con il
+bit trigger-based le entita' sono **sempre disponibili**, perche'
+`BTHomeSensor.available` ritorna `True` quando il dispositivo e' *sleepy*.
+Con `0x40` un solo advertisement perso puo' far sparire il dispositivo.
+Dettagli, codice citato e il rovescio della medaglia — un dispositivo morto
+non si distingue da uno vivo — in [Pacchetto BTHome](/software/bthome/).
+
+### Intervallo di risveglio: 10 minuti
+
+Il livello del pellet cambiando lentamente non ha bisogno di piu': una stufa
+consuma nell'ordine di 1 kg/h e una tramoggia da 15–20 kg dura piu' di dieci
+ore, quindi a 10 minuti si campiona **molto piu' spesso del necessario** per
+il livello in se'. La granularita' serve al rilevamento della ricarica, che e'
+un evento istantaneo.
+
+Secondo motivo, piu' sottile: 600 s stanno sotto i **900 s** del fallback di
+`habluetooth` per gli advertisement scaduti. Se un giorno il bit trigger-based
+venisse tolto, il dispositivo non sparirebbe comunque per il solo fatto di
+dormire.
+
+**Il criterio per cambiare idea**, in entrambe le direzioni:
+
+- si **allunga** (15 o 30 minuti) se il consumo misurato mette in pericolo
+  l'obiettivo di oltre un anno di autonomia
+- si **accorcia** solo se il rilevamento della ricarica perde eventi; non per
+  avere un grafico piu' liscio, che e' il modo di spendere batteria per niente
 
 ## Ciclo di funzionamento
 
@@ -49,3 +99,12 @@ dove sono registrate anche le decisioni ancora aperte.
 
 Sono stime: la misura reale del consumo in deep sleep e in trasmissione e' un
 task aperto, ed e' la variabile che decide davvero l'autonomia.
+
+:::note
+La riga da ~1 mAh/giorno era calcolata su un risveglio ogni **15** minuti.
+Con i 10 minuti decisi sopra i cicli al giorno passano da 96 a 144: cresce di
+una volta e mezza la parte attiva, mentre la parte a riposo — ~17 µA tra
+deep sleep dello XIAO e partitore, cioe' ~0,4 mAh al giorno — non cambia.
+Quanto pesino l'una sull'altra lo dira' il calcolo per ciclo con i valori
+veri, che e' il task 4.4 del change `firmware-bthome`.
+:::

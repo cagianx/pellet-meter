@@ -36,6 +36,19 @@ Home Assistant SHALL poter avvisare quando il livello scende sotto una soglia.
 - **WHEN** il livello scende sotto la soglia configurata
 - **THEN** viene generato un avviso
 
+### Requirement: Rilevamento del dato fermo
+
+Poiche' il dispositivo si dichiara trigger-based (`0x44`), Home Assistant non
+lo marca mai come non disponibile: un guasto o una batteria scarica non si
+distinguono da un funzionamento normale. Il sistema SHALL quindi riconoscere
+un dato che non si aggiorna piu'.
+
+#### Scenario: Nessuna lettura da piu' cicli
+- **WHEN** l'ultimo aggiornamento dell'entita' e' piu' vecchio di un multiplo
+  configurabile dell'intervallo di risveglio
+- **THEN** viene segnalato che il sensore non risponde
+- **AND** la segnalazione non si basa sulla disponibilita' dell'entita'
+
 ### Requirement: Rilevamento della ricarica
 
 Il sistema SHALL riconoscere una ricarica da un aumento improvviso del livello.
