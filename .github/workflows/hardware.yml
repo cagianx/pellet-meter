@@ -92,8 +92,12 @@ jobs:
 
       - name: Ci sono sorgenti OpenSCAD?
         id: sorgenti
+        # Niente compgen: e' un builtin di bash, e dove il passo gira sotto
+        # dash "compgen: not found" fa prendere il ramo else senza rumore.
+        # Qui oggi funzionerebbe, ma un controllo che dipende dalla shell
+        # e' un controllo che un giorno si disattiva da solo.
         run: |
-          if compgen -G 'enclosure/*.scad' > /dev/null; then
+          if find enclosure -maxdepth 1 -name '*.scad' | grep -q .; then
             echo "presenti=si" >> "$GITHUB_OUTPUT"
             echo "Trovati: $(ls enclosure/*.scad | tr '\n' ' ')"
           else

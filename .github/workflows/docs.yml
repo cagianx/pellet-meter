@@ -48,8 +48,15 @@ jobs:
           apt-get update -qq
           apt-get install -y --no-install-recommends \
             librsvg2-bin imagemagick python3
-          if compgen -G 'enclosure/*.scad' > /dev/null; then
+          # Niente compgen: e' un builtin di bash, e in un container il
+          # passo puo' girare sotto dash, dove "compgen: not found" fa
+          # semplicemente prendere il ramo else. L'installazione veniva
+          # saltata in silenzio e il job restava verde.
+          if find enclosure -maxdepth 1 -name '*.scad' | grep -q .; then
+            echo "trovati sorgenti OpenSCAD, installo openscad e xvfb"
             apt-get install -y --no-install-recommends openscad xvfb
+          else
+            echo "nessun sorgente OpenSCAD"
           fi
 
       - name: Render

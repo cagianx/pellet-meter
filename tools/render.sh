@@ -46,6 +46,24 @@ assente() {
   avvisi=$((avvisi + 1))
 }
 
+# --- Cosa c'e' in questo ambiente ------------------------------------------
+#
+# Stampato sempre, anche quando va tutto bene. Quando qualcosa salta, la
+# prima domanda e' "che strumenti aveva a disposizione?", e la risposta
+# deve stare nello stesso log invece di richiedere un'altra esecuzione.
+
+echo "== strumenti"
+for t in kicad-cli openscad rsvg-convert magick convert identify python3 xvfb-run; do
+  if percorso=$(command -v "$t" 2>/dev/null); then
+    printf "  %-13s %s\n" "$t" "$percorso"
+  else
+    printf "  %-13s ASSENTE\n" "$t"
+  fi
+done
+printf "  %-13s %s\n" "display" "${DISPLAY:-${WAYLAND_DISPLAY:-nessuno}}"
+printf "  %-13s %s\n" "strict" "$strict"
+echo
+
 # --- Schema elettrico ------------------------------------------------------
 
 echo "== schema elettrico"
