@@ -129,6 +129,12 @@ jobs:
           done
           exit $stato
 
+      - name: Le quote corrispondono ai parametri dichiarati
+        if: steps.sorgenti.outputs.presenti == 'si'
+        # Il render che non fallisce dice solo che il file e' valido, non
+        # che il solido ha le quote che il modello afferma di avere.
+        run: python3 tools/check_case.py
+
       - uses: actions/upload-artifact@v4
         if: steps.sorgenti.outputs.presenti == 'si'
         with:

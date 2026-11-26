@@ -127,9 +127,12 @@ else
     nome=$(basename "$f" .scad)
     # --render forza la geometria esatta invece dell'anteprima rapida:
     # l'anteprima mostra artefatti sulle intersezioni.
+    # --autocenter e --viewall inquadrano il pezzo: senza, la camera di
+    # default lo taglia o lo lascia lontano.
     openscad --render \
       --imgsize=1600,1200 \
       --colorscheme=Tomorrow \
+      --autocenter --viewall \
       -o "$OUT/$nome.png" "$f" >/dev/null 2>&1
     echo "  $nome.png $(stat -c%s "$OUT/$nome.png") byte"
   done

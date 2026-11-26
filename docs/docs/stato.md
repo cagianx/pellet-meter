@@ -14,6 +14,8 @@ description: "A che punto e' il progetto e dove sono tracciati i lavori."
 | CI hardware | Verde, nel container KiCad 10.0.8 |
 | Scheletro del firmware | Progetto ESP-IDF che compila per esp32c6, switch RF dell'antenna |
 | CI firmware | Verde, nel container `espressif/idf:v5.5` |
+| Contenitore | Modello OpenSCAD parametrico, quote verificate contro il solido |
+| Render | Schema e contenitore pubblicati nel sito e nel README, prodotti dalla CI |
 | Documentazione | Questo sito |
 
 ## Cosa fornisce questo progetto
@@ -32,12 +34,12 @@ cosa deve risultare vero, senza possedere il gesto manuale che lo verifica.
 Il lavoro e' tracciato con **OpenSpec**, in `openspec/changes/`. Ogni change
 ha proposal (perche'), spec (cosa deve fare), design (come) e task.
 
-| Change | Task | Contenuto |
+| Change | Task aperti | Contenuto |
 |---|---|---|
-| `firmware-bthome` | 19 | Ciclo deep sleep, misura, pacchetto BTHome |
-| `contenitore-3d` | 13 | Modello OpenSCAD parametrico, verifica del render |
-| `calibrazione-home-assistant` | 12 | Template di calibrazione, avvisi, grandezze derivate |
-| `schema-leggibile` | 10 | Disposizione dello schema nella GUI, pubblicazione nel sito |
+| `firmware-bthome` | 14 di 19 | Acquisizione, pacchetto BTHome, ciclo di deep sleep |
+| `calibrazione-home-assistant` | 13 di 13 | Template di calibrazione, avvisi, grandezze derivate |
+| `schema-leggibile` | 8 di 10 | Disposizione dello schema nella GUI, lavoro da fare in KiCad |
+| `contenitore-3d` | 1 di 13 | Resta la conferma della CI |
 
 ```bash
 openspec list                 # stato dei change

@@ -31,7 +31,7 @@ la misura sul banco.
 |---|---|
 | Schema elettrico | fatto — ERC pulito, netlist verificata; disposizione da curare |
 | Firmware | scheletro ESP-IDF che compila, switch RF; misura e BTHome da scrivere |
-| Contenitore 3D | da fare |
+| Contenitore 3D | modello OpenSCAD parametrico, quote verificate; da stampare |
 | Configurazione Home Assistant | da fare |
 
 Il repo fornisce **il progetto**, non la realizzazione: schema, firmware,
