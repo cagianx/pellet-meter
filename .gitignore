@@ -17,3 +17,10 @@ enclosure/out/
 docs/node_modules/
 docs/_site/
 node_modules/
+
+# Python
+__pycache__/
+*.pyc
+
+# Report generati
+*.rpt
