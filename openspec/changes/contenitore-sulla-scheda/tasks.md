@@ -31,7 +31,18 @@ massimo 10 mm sotto il coperchio.
 - [ ] 3.3 Provare che il controllo dica ancora di no quando deve: scheda troppo grande, e apertura ottica sulla faccia sbagliata
 - [ ] 3.4 Le altre verifiche restano verdi: ERC, netlist, DRC con parita', `check_case.py`
 
-## 4. Documentazione
+## 4. Fissaggio e chiusura
 
-- [ ] 4.1 Correggere in docs/ il verso di montaggio e togliere l'avviso che dice che il contenitore non misura
-- [ ] 4.2 Registrare perche' i vani non sono piu' uno per componente, e quale dato manca per scegliere la disposizione
+Decisi con chi installa: **viti con dado** al coperchio della tramoggia, e
+**una vite** che assicura il coperchio della scatola.
+
+- [ ] 4.1 Fori passanti per il fissaggio al coperchio della tramoggia, con interasse e diametro come parametri
+- [ ] 4.2 Vite di chiusura del coperchio della scatola, che **si aggiunge** allo scatto invece di sostituirlo: l'ottica sta sul coperchio, che guarda in giu', e se cede cadono scheda e cella
+- [ ] 4.3 Il biadesivo resta come aiuto al montaggio, non come fissaggio: rivedere di conseguenza il controllo sull'area, che oggi presuppone sia lui a reggere
+- [ ] 4.4 Altezza del modulo sopra la scheda come parametro, cosi' lo spessore segue la scelta di chi costruisce fra zoccolo e saldatura a filo
+
+## 5. Documentazione
+
+- [ ] 5.1 Correggere in docs/ il verso di montaggio e togliere l'avviso che dice che il contenitore non misura
+- [ ] 5.2 Registrare perche' i vani non sono piu' uno per componente
+- [ ] 5.3 Spiegare che il fissaggio meccanico sostituisce l'adesivo come elemento portante, e perche': sopra i ~60 gradi il PLA cede e l'adesivo scivola prima di strapparsi

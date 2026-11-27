@@ -91,6 +91,25 @@ esattamente il controllo che oggi dice di no.
   la modifica va fatta sullo schema o sul footprint, non aggiustando il
   layout a mano.
 
+- **Fissaggio meccanico, non adesivo.** Due viti passanti con dado nel
+  coperchio della tramoggia. Il biadesivo resta utile a tenere fermo il
+  pezzo mentre si stringe, ma smette di essere l'elemento portante: su una
+  lamiera che scalda, un adesivo non si strappa di colpo, **scivola**, e
+  un dispositivo che scende di qualche millimetro falsa tutte le misure
+  senza rompersi. Viti invece di rivetti perche' il dispositivo resta
+  removibile senza trapano.
+
+- **Una vite assicura anche il coperchio della scatola**, in aggiunta allo
+  scatto e non al suo posto. Con l'ottica sul coperchio, quel coperchio
+  guarda in giu': se lo scatto cede, scheda e cella cadono nel pellet.
+  Lo scatto da solo era difendibile quando il coperchio guardava in su.
+
+- **L'altezza del modulo sopra la scheda e' un parametro.** Zoccolo
+  standard, zoccolo basso o modulo saldato a filo cambiano lo spessore
+  della scatola di quasi 7 mm. Siccome il PCB porta un footprint che
+  accetta entrambe le soluzioni, la scelta appartiene a chi costruisce, e
+  il contenitore deve seguirla senza essere riscritto.
+
 ## Open Questions
 
 Nessuna. Lo spazio sotto il coperchio e' stato misurato: 50-70 mm a pieno

@@ -56,6 +56,29 @@ Nota su 4.4: il controllo c'e', e oggi dice **no** — la scheda eccede di
 insieme all'aggiornamento delle quote del contenitore, altrimenti lascia
 la pipeline rossa.
 
+## 6. Produzione presso JLCPCB
+
+La scheda sara' prodotta da JLCPCB, non saldata a mano su millefori. Cambia
+cosa conviene metterci sopra e cosa serve consegnare.
+
+- [ ] 6.1 Passivi da through-hole a SMD: con l'assemblaggio in fabbrica il
+      foro passante non e' piu' un vantaggio, e toglie di mezzo l'altezza
+      dell'elettrolitico, che diventerebbe il componente piu' alto
+- [ ] 6.2 Verificare sul catalogo JLCPCB quali parti sono "basic": una parte
+      "extended" costa un caricamento per tipo, e su una scheda da pochi
+      componenti pesa
+- [ ] 6.3 Verificare se il modulo XIAO e' assemblabile da loro; se no,
+      dichiarare in docs/ che resta a carico di chi costruisce
+- [ ] 6.4 Regole di progetto allineate alle capacita' dichiarate da JLCPCB,
+      non ai default di KiCad: un DRC tarato piu' largo del processo non
+      protegge, uno piu' stretto fa rifare il lavoro
+- [ ] 6.5 Esportare Gerber, foratura, distinta e file di piazzamento con
+      `kicad-cli`, e verificarne la presenza come si fa per gli altri
+      artefatti
+- [ ] 6.6 Footprint del modulo che accetti **sia** lo zoccolo **sia** la
+      saldatura a filo, cosi' lo spessore della scatola resta una scelta di
+      chi costruisce e non una decisione congelata nel rame
+
 ## 5. Documentazione
 
 - [x] 5.1 Riscrivere in docs/decisioni.md il rinvio del PCB come decisione ribaltata, con il motivo
