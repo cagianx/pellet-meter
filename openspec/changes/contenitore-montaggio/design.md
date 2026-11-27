@@ -24,11 +24,18 @@ decisi, ora si'.
   in una tramoggia e' un tappo perso al primo smontaggio. Il cordino e' un
   filetto sottile stampato nello stesso pezzo, che fa da cerniera viva.
 
-- **Chiusura a scatto, non a vite.** Due dentini sul labbro del coperchio e
-  due incavi corrispondenti nella battuta. Si apre facendo leva con
-  un'unghia in una tacca, e tiene a testa in giu'. Le viti
-  richiederebbero inserti o filetti stampati, che su un pezzo da iterare
-  si rompono prima del resto.
+- **Chiusura a scatto, non a vite.** Si apre facendo leva con un'unghia
+  in una tacca, e tiene a testa in giu'. Le viti richiederebbero inserti
+  o filetti stampati, che su un pezzo da iterare si rompono prima del
+  resto.
+
+  Il verso e' **l'opposto di come era stato scritto qui**: i dentini
+  stanno sulla battuta della scatola e le finestre nel labbro del
+  coperchio, non viceversa. In quei millimetri la battuta riduce la
+  parete a 0,9 mm: un incavo profondo quanto serve al dentino ne
+  lascerebbe 0,3, cioe' una parete di un'estrusione. Una finestra nel
+  labbro invece passa da parte a parte e non lascia spessori sottili, e
+  il dentino cresce sulla parete dove di materiale ce n'e'.
 
 - **La superficie di incollaggio e' il fondo**, cioe' la faccia che oggi
   guarda il pellet. Il contenitore si monta **capovolto** rispetto a come

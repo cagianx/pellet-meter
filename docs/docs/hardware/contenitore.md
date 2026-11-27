@@ -146,6 +146,13 @@ Scendendo, il labbro ci scivola sopra, si flette, e alla fine scatta
 dentro la finestra; per risalire deve flettersi di nuovo, ed e' questo
 che lo trattiene.
 
+Il verso sembra invertito e lo e' di proposito. La cosa ovvia sarebbe il
+dentino sul labbro e l'incavo nella battuta, ma **in quei millimetri la
+parete e' spessa 0,9 mm**: un incavo profondo quanto serve ne
+lascerebbe 0,3, cioe' una sola estrusione. Una finestra nel labbro, che
+passa da parte a parte, non lascia spessori sottili da nessuna parte, e
+il dentino cresce sulla parete, dove il materiale c'e'.
+
 La sporgenza del dentino **non e' una seconda tolleranza**: vale
 `2 × gioco`, cioe' 0,6 mm con `gioco = 0,3`. Il labbro corre a `gioco/2`
 dalla battuta, quindi la presa utile e' 0,45 mm. Resta un numero solo da
