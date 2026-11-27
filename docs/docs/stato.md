@@ -69,11 +69,34 @@ ragioni sono in [Decisioni di progetto](/decisioni/) e in
 | Valore | Stato |
 |---|---|
 | Coperchio → pellet **a serbatoio pieno** | **50–70 mm**, misurato |
-| Coperchio → pellet **a serbatoio vuoto** | manca |
-| Fondo a imbuto? | manca — se lo e', la conversione lineare sbaglia |
+| Coperchio → pellet **a serbatoio vuoto** | **800–900 mm**, misurato |
+| Fondo a imbuto? | **si** |
+| Larghezza interna della tramoggia | manca — vedi sotto, e' diventata la domanda piu' urgente |
 
 Il progetto non li misura: li tratta come parametri, e il compito dei change
 e' renderli facili da inserire e da cambiare.
+
+:::warning
+**A serbatoio vuoto il fascio e' piu' largo della tramoggia, quasi
+certamente.** Il VL53L1X ha un cono di 27°, e l'impronta cresce con la
+distanza:
+
+| Distanza | Impronta a 27° | Impronta a 15° (ROI 4×4) |
+|---|---|---|
+| 50 mm (pieno) | 24 mm | 13 mm |
+| 400 mm | 192 mm | 105 mm |
+| 900 mm (vuoto) | **432 mm** | 237 mm |
+
+Se la tramoggia e' piu' stretta di 43 cm — e quasi tutte lo sono — a
+serbatoio quasi vuoto il sensore **vede le pareti, non il pellet**, e
+riporta la distanza della parete piu' vicina. Restringere la ROI da
+16×16 a 4×4 SPAD porta l'impronta a 237 mm, che e' la differenza fra
+funzionare e non funzionare.
+
+Serve quindi la **larghezza interna della tramoggia**: e' il numero che
+dice se basta la ROI stretta o se bisogna rassegnarsi a misurare bene
+solo nella parte alta della corsa.
+:::
 
 :::warning
 **I 50 mm del caso peggiore sono un vincolo di progetto, non un dato di

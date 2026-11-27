@@ -112,8 +112,8 @@ binario e occupazione di flash.
 1. Risveglio dal timer RTC (uscita dal deep sleep).
 2. **Impostare lo switch RF dell'antenna**, prima di toccare il BLE.
 3. Accensione del sensore (`sensor_power_set(true)`) → attesa di avvio →
-   inizializzazione del VL53L1X (distance mode short/medium, ROI ristretta
-   se serve).
+   inizializzazione del VL53L1X: **short distance mode** e **ROI 4×4**,
+   non "se serve" (vedi sotto).
 4. 5–7 misure → **mediana**, scartando le letture che il sensore segnala come
    non valide.
 5. Lettura della batteria: ADC calibrato (`esp_adc_cali`) → mV × fattore del
@@ -121,6 +121,34 @@ binario e occupazione di flash.
 6. Costruzione del pacchetto BTHome e advertising per ~1 s (intervallo ~100 ms).
 7. Spegnimento del sensore, stato sicuro di SDA/SCL/XSHUT, incremento del
    packet id in RTC memory, deep sleep.
+
+## Perche' short mode e ROI stretta non sono opzionali
+
+La tramoggia misurata va da **50 mm** a pieno carico a **800–900 mm** a
+vuoto. Due conseguenze dirette sulla configurazione del sensore.
+
+**Short distance mode basta, ed e' la scelta giusta.** La portata
+dichiarata in short e' ~1360 mm, quindi copre i 900 mm con margine; delle
+tre modalita' e' quella con la migliore immunita' alla luce ambiente, e
+non c'e' ragione di pagare il rumore di medium o long per una portata che
+non serve.
+
+**La ROI va ristretta a 4×4 SPAD.** Con il cono pieno da 27° l'impronta
+del fascio a 900 mm e' **432 mm**: piu' larga della tramoggia, quasi
+certamente. Il sensore riporterebbe la distanza della parete piu' vicina
+invece di quella del pellet, e lo farebbe **senza segnalare nulla** —
+sarebbe una lettura valida e sbagliata, il tipo peggiore. A 4×4 l'angolo
+scende a ~15° e l'impronta a 237 mm.
+
+| Distanza | Impronta a 27° | Impronta a 15° |
+|---|---|---|
+| 50 mm (pieno) | 24 mm | 13 mm |
+| 900 mm (vuoto) | 432 mm | 237 mm |
+
+Resta da sapere la **larghezza interna della tramoggia**: se e' sotto i
+237 mm, nemmeno la ROI stretta basta nella parte bassa della corsa, e
+bisogna accettare che la misura sia attendibile solo a serbatoio non
+troppo vuoto.
 
 ## Come e' alimentato il sensore: scelta a compile time
 
