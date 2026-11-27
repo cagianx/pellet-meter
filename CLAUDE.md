@@ -75,6 +75,13 @@ non collegati.
 - **I pull-up I²C del breakout sono alimentati dalla rete VSENS.** Prima del
   deep sleep, SDA/SCL/XSHUT vanno messi in uno stato che non faccia passare
   corrente nel sensore spento attraverso quelle linee.
+- **Il contenitore si monta capovolto.** Si incolla sotto il coperchio
+  della tramoggia: la faccia che nel modello sta in basso e' quella
+  incollata, e il coperchio della scatola guarda il pellet. Leggendo
+  `case.scad` non si vede, ed e' la ragione del fondo piano, della
+  ritenuta a scatto del coperchio e del tappo sulla USB-C. Resta aperto
+  che l'apertura ottica, in quel verso, guarda la lamiera e non il
+  pellet: vedi l'avviso in `docs/docs/hardware/contenitore.md`.
 - **Lo XIAO ESP32C6 ha uno switch RF su GPIO interni** (non esposti sui 14 pin
   del connettore, quindi non compaiono sullo schema). Vanno impostati **a ogni
   risveglio**, prima di inizializzare il BLE, altrimenti l'advertising esce
