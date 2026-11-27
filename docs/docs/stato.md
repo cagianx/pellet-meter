@@ -64,15 +64,30 @@ device info **`0x44`** (trigger-based), risveglio ogni **10 minuti**. Le
 ragioni sono in [Decisioni di progetto](/decisioni/) e in
 [Firmware](/software/firmware/).
 
-## I numeri che mancano
+## I numeri della tramoggia
 
-Due valori non si possono ricavare a tavolino e vanno inseriti da chi
-installa: la distanza dal coperchio al pellet **a serbatoio pieno** e **a
-serbatoio vuoto**. Serve anche sapere se il fondo e' a imbuto, perche' in
-quel caso la conversione lineare sbaglia.
+| Valore | Stato |
+|---|---|
+| Coperchio → pellet **a serbatoio pieno** | **50–70 mm**, misurato |
+| Coperchio → pellet **a serbatoio vuoto** | manca |
+| Fondo a imbuto? | manca — se lo e', la conversione lineare sbaglia |
 
 Il progetto non li misura: li tratta come parametri, e il compito dei change
 e' renderli facili da inserire e da cambiare.
+
+:::warning
+**I 50 mm del caso peggiore sono un vincolo di progetto, non un dato di
+contorno.** Il VL53L1X misura da ~40 mm, quindi a serbatoio pieno il
+sensore puo' stare al massimo **10 mm sotto il coperchio**: non puo'
+trovarsi sul fondo del contenitore, perche' lo spessore dell'involucro si
+mangerebbe la portata. Da qui la scheda montata in alto e l'apertura
+ottica a tunnel conico, nel change `contenitore-sulla-scheda`.
+
+Il margine che resta e' di **6 mm**. Riempiendo la tramoggia oltre il
+colmo il sensore smette di dare letture valide: e' il motivo per cui il
+firmware deve avere un comportamento definito quando nessuna lettura e'
+valida, invece di inventare una distanza.
+:::
 
 ## Decisioni ancora aperte
 

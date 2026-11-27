@@ -36,6 +36,23 @@ interna.
 
 ## ADDED Requirements
 
+### Requirement: Il sensore resta entro la portata utile
+
+La distanza fra la faccia di fissaggio e il sensore SHALL essere tale che,
+a serbatoio pieno, la distanza misurata resti sopra la portata minima del
+sensore.
+
+#### Scenario: Serbatoio pieno
+- **WHEN** il pellet e' al livello massimo previsto
+- **THEN** la distanza fra sensore e pellet e' maggiore della portata
+  minima dichiarata
+- **AND** il contenitore non consuma quel margine con il proprio spessore
+
+#### Scenario: Contenitore troppo spesso sotto il sensore
+- **WHEN** il sensore verrebbe a trovarsi piu' in basso di quanto il
+  margine consenta
+- **THEN** la verifica fallisce indicando di quanto
+
 ### Requirement: I vani seguono l'hardware reale
 
 I vani SHALL essere dimensionati sugli oggetti che il dispositivo contiene

@@ -43,12 +43,33 @@ esattamente il controllo che oggi dice di no.
   un numero che gia' esiste in due posti, e la prima che diventera' falsa.
   `check_fit.py` sa gia' ricavarle dal `.kicad_pcb`.
 
-- **Non si sceglie fra "piu' alto" e "piu' largo" a tavolino.** Cella
-  accanto alla scheda da' ~70 x 54 x 19; cella sopra o sotto da' ~54 x 38
-  ma oltre 25 mm di altezza. Quale sia preferibile lo decide lo spazio
-  sotto il coperchio della tramoggia, che non conosciamo. Il modello
-  espone la disposizione come **parametro**, cosi' la scelta si fa quando
-  il numero arriva, senza riscrivere geometria.
+- **Il sensore sta contro la faccia incollata, e l'ottica e' un tunnel
+  conico.** E' il vincolo che decide tutto il resto, ed e' arrivato con la
+  misura della tramoggia: **50-70 mm** fra coperchio e pellet a pieno
+  carico. Il VL53L1X misura da ~40 mm, quindi nel caso peggiore il sensore
+  puo' stare al massimo **10 mm sotto il coperchio**.
+
+  Il conto dice che il sensore **non puo' stare sul fondo** del
+  contenitore, in nessuna delle due configurazioni:
+
+  | Dove sta il sensore | Spessore | Misura a pieno carico |
+  |---|---|---|
+  | sul fondo, modulo innestato | 19 mm | 31 mm — **sotto il minimo** |
+  | sul fondo, modulo castellato | 10,5 mm | 39,5 mm — **sotto il minimo** |
+  | contro la faccia incollata | indifferente | ~46 mm — ok |
+
+  Da qui tre conseguenze. La prima: **lo spessore del contenitore quasi
+  non conta**, quindi la scelta fra modulo innestato e castellato non e'
+  piu' in discussione — l'innestato resta. La seconda: la scheda va
+  montata **alta**, contro la faccia incollata, e la cella sotto o
+  accanto. La terza: fra sensore e pellet c'e' tutto lo spessore del
+  contenitore, quindi l'apertura non e' piu' un foro nel fondo ma un
+  **tunnel conico** che attraversa il pezzo, largo 5 mm all'ingresso e
+  ~14 mm all'uscita con 19 mm di spessore.
+
+- **La disposizione della cella resta un parametro**, ma non e' piu' la
+  decisione critica: avendo stabilito che la scheda sta in alto, cella
+  accanto o cella sotto cambiano l'ingombro, non la misura.
 
 - **`check_fit.py` entra in CI solo quando passa.** Metterlo prima
   significherebbe una pipeline rossa per un difetto gia' noto e tracciato,
@@ -72,6 +93,14 @@ esattamente il controllo che oggi dice di no.
 
 ## Open Questions
 
-- **Quanto spazio c'e' sotto il coperchio della tramoggia?** E' il dato
-  che decide la disposizione, e in ultima istanza se convenga tornare al
-  modulo saldato a filo (castellato), che toglierebbe 8,5 mm.
+Nessuna. Lo spazio sotto il coperchio e' stato misurato: 50-70 mm a pieno
+carico.
+
+Resta un **margine stretto** da tenere d'occhio: con il sensore in alto la
+misura a pieno carico e' ~46 mm contro un minimo di ~40. Sei millimetri.
+Se la tramoggia viene riempita oltre il colmo, il sensore finisce sotto il
+minimo e smette di dare letture valide. Non e' un difetto da correggere
+nel contenitore — e' il motivo per cui il firmware deve avere un
+comportamento definito quando nessuna lettura e' valida, che e' gia' il
+task 3.3 di `firmware-bthome`, e per cui Home Assistant deve accorgersi
+del dato fermo.

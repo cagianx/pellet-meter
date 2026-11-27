@@ -6,6 +6,17 @@
 - [ ] 1.2 Riflettere il nuovo verso del breakout dove e' descritto: schema, collegamenti, pagina del PCB
 - [ ] 1.3 Controllo che fallisca se l'apertura ottica finisce sulla faccia di fissaggio
 
+## 1bis. Portata utile del sensore
+
+Lo spazio misurato fra coperchio e pellet a pieno carico e' 50-70 mm, e il
+VL53L1X misura da ~40 mm: nel caso peggiore il sensore puo' stare al
+massimo 10 mm sotto il coperchio.
+
+- [ ] 1bis.1 Portata minima del sensore e spazio disponibile a pieno carico come parametri
+- [ ] 1bis.2 Scheda montata contro la faccia di fissaggio, cella sotto o accanto
+- [ ] 1bis.3 Apertura ottica come tunnel conico che attraversa tutto il pezzo, non come foro nel solo fondo
+- [ ] 1bis.4 Controllo che fallisca se il sensore finisce troppo in basso per misurare a serbatoio pieno
+
 ## 2. Vani sull'hardware reale
 
 - [ ] 2.1 Ridisegnare i vani attorno a scheda assemblata e cella, togliendo il vano del breakout
